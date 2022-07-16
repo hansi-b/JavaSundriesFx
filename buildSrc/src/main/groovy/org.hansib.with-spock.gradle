@@ -7,13 +7,8 @@ repositories {
 }
 
 dependencies {
-
-	// required for module access
-	// see https://github.com/spockframework/spock/issues/1227
-	implementation 'org.apache.groovy:groovy:4.0.0'
-
 	testImplementation 'org.objenesis:objenesis:3.2'
-	testImplementation 'org.spockframework:spock-core:2.2-M1-groovy-4.0'
+	testImplementation 'org.spockframework:spock-core:2.2-M3-groovy-4.0'
 }
 
 testing {

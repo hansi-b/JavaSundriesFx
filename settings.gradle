@@ -1,2 +1,2 @@
-rootProject.name = 'JavaFxTemplate'
-include('fxApp', 'utilities')
+rootProject.name = 'SundriesFx'
+include 'sundriesFx'

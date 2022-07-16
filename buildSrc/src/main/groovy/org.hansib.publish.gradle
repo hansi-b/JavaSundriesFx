@@ -1,0 +1,33 @@
+plugins {
+	id 'maven-publish'
+	id 'com.github.hierynomus.license'
+}
+
+publishing {
+
+	publications {
+		mavenJava(MavenPublication) {
+			groupId = 'org.hansib'
+			artifactId = 'sundries-fx'
+			from components.java
+		}
+	}
+
+	repositories {
+		maven {
+			name = 'GitHubPackages'
+			url = 'https://maven.pkg.github.com/hansi-b/JavaSundriesFx'
+			credentials {
+				username = project.findProperty("GITHUB_ACTOR") ?: ""
+				password = project.findProperty("GITHUB_REPO_PAT_RW") ?: ""
+			}
+		}
+	}
+}
+
+license {
+	header project.file('LICENSE.HEADER')
+	ext.year = Calendar.getInstance().get(Calendar.YEAR)
+
+	include '**/*.java'
+}
