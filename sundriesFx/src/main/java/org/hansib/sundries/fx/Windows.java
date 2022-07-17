@@ -31,7 +31,7 @@ import javafx.stage.Window;
 public class Windows {
 
 	/**
-	 * @return the last, i.e.g, current focused stage
+	 * @return the last, i.e., currently focused stage
 	 */
 	public static Stage findFocusedStage() {
 		return Window.getWindows().stream()//
