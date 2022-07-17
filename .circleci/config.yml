@@ -18,6 +18,8 @@ jobs:
       TERM: dumb
 
     steps:
+      - run: sudo apt update && sudo apt install -y libpangoft2-1.0-0
+
       - checkout
 
       # Download and cache dependencies
