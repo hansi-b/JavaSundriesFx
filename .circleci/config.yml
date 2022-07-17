@@ -1,0 +1,41 @@
+# Java Gradle CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-java/ for more details
+#
+version: 2.1
+orbs:
+  codecov: codecov/codecov@1.0.2
+jobs:
+  build:
+    docker:
+      # specify the version you desire here
+      - image: cimg/openjdk:17.0.1
+
+    working_directory: ~/repo
+
+    environment:
+      JVM_OPTS: -Xmx1g
+      TERM: dumb
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "buildSrc/build.gradle" }}-{{ checksum "sundriesFx/build.gradle" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+      - run: gradle dependencies
+
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: v1-dependencies-{{ checksum "buildSrc/build.gradle" }}-{{ checksum "sundriesFx/build.gradle" }}
+
+      - run:
+          gradle check jacocoTestReport
+      - codecov/upload:
+          file: sundries/build/reports/jacoco/test/jacocoTestReport.xml
+          token: $CODECOV_TOKEN
