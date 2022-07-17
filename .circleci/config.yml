@@ -35,7 +35,8 @@ jobs:
           key: v1-dependencies-{{ checksum "buildSrc/build.gradle" }}-{{ checksum "sundriesFx/build.gradle" }}
 
       - run:
-          gradle check jacocoTestReport
+          gradle check jacocoTestReport -Pheadless=true --info
       - codecov/upload:
-          file: sundries/build/reports/jacoco/test/jacocoTestReport.xml
+          file: sundriesFx/build/reports/jacoco/test/jacocoTestReport.xml
           token: $CODECOV_TOKEN
+
