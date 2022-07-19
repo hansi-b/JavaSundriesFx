@@ -25,15 +25,11 @@
  */
 package org.hansib.sundries.fx;
 
-import javafx.beans.binding.BooleanBinding;
-import javafx.beans.property.ReadOnlyBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
 
 public class RenamableTab {
 
@@ -45,25 +41,16 @@ public class RenamableTab {
 	private final TextField textField;
 	private final Label label;
 
-	private final StringProperty labelProp;
-
-	private final BooleanBinding isTabEmpty;
-	private final ReadOnlyBooleanProperty isTabSelected;
-
 	public RenamableTab(final String initialLabel) {
+
+		label = new Label(initialLabel);
+
+		initLabel();
+
 		tab = new Tab();
-
-		labelProp = new SimpleStringProperty(initialLabel);
-
-		label = new Label();
-		label.textProperty().bind(labelProp);
-		label.getStyleClass().add(CSS_RENAMABLE_TAB_UNSELECTED);
 		tab.setGraphic(label);
 
-		textField = new TextField();
-
-		isTabSelected = tab.selectedProperty();
-		isTabSelected.addListener((observable, oldValue, newValue) -> {
+		tab.selectedProperty().addListener((observable, oldValue, newValue) -> {
 			final ObservableList<String> styleClass = label.getStyleClass();
 			if (Boolean.TRUE.equals(newValue)) {
 				styleClass.remove(CSS_RENAMABLE_TAB_UNSELECTED);
@@ -75,27 +62,28 @@ public class RenamableTab {
 					styleClass.add(CSS_RENAMABLE_TAB_UNSELECTED);
 			}
 		});
-		isTabEmpty = textField.textProperty().isEmpty();
-		isTabEmpty.addListener((obs, oldVal, newVal) -> {
+
+		textField = new TextField();
+
+		textField.textProperty().addListener((observable, oldValue, newValue) -> {
 			final ObservableList<String> styleClass = textField.getStyleClass();
-			if (Boolean.TRUE.equals(newVal)) {
+			if (newValue == null || newValue.isBlank()) {
 				if (!styleClass.contains(CSS_RENAMABLE_TAB_ERROR))
 					styleClass.add(CSS_RENAMABLE_TAB_ERROR);
 			} else
-				styleClass.remove(CSS_RENAMABLE_TAB_ERROR);
+				styleClass.removeIf(CSS_RENAMABLE_TAB_ERROR::equals);
 		});
-
-		textField.setOnAction(event -> updateOrLeave(tab, labelProp, label, textField));
 
 		textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
 			if (Boolean.FALSE.equals(newValue))
-				updateOrLeave(tab, labelProp, label, textField);
+				updateOrLeave();
 		});
 
-		textField.setOnKeyPressed(e -> {
-			if (e.getCode() == KeyCode.ENTER && textField.getText().isEmpty())
-				textField.requestFocus();
-		});
+		textField.setOnAction(event -> updateOrLeave());
+	}
+
+	private void initLabel() {
+		label.getStyleClass().add(CSS_RENAMABLE_TAB_UNSELECTED);
 
 		label.setOnMouseClicked(event -> {
 			if (event.getClickCount() == 2)
@@ -108,7 +96,7 @@ public class RenamableTab {
 	}
 
 	public StringProperty labelProperty() {
-		return labelProp;
+		return label.textProperty();
 	}
 
 	public void editLabel() {
@@ -118,13 +106,12 @@ public class RenamableTab {
 		textField.requestFocus();
 	}
 
-	private static void updateOrLeave(final Tab tab, final StringProperty name, final Label label,
-			final TextField textField) {
+	private void updateOrLeave() {
 		final String text = textField.getText();
 		if (text.isEmpty()) {
 			textField.requestFocus();
 		} else {
-			name.setValue(text);
+			label.setText(text);
 			tab.setGraphic(label);
 		}
 	}
