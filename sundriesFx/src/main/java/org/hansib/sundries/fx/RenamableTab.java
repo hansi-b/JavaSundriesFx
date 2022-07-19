@@ -63,23 +63,10 @@ public class RenamableTab {
 			}
 		});
 
-		textField = new TextField();
-
-		textField.textProperty().addListener((observable, oldValue, newValue) -> {
-			final ObservableList<String> styleClass = textField.getStyleClass();
-			if (newValue == null || newValue.isBlank()) {
-				if (!styleClass.contains(CSS_RENAMABLE_TAB_ERROR))
-					styleClass.add(CSS_RENAMABLE_TAB_ERROR);
-			} else
-				styleClass.removeIf(CSS_RENAMABLE_TAB_ERROR::equals);
-		});
-
-		textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-			if (Boolean.FALSE.equals(newValue))
-				updateOrLeave();
-		});
-
-		textField.setOnAction(event -> updateOrLeave());
+		textField = new TextFieldValidation() //
+				.withInvalidCssStyleClass(CSS_RENAMABLE_TAB_ERROR) //
+				.withValidatedTextCallback(this::updateText) //
+				.build();
 	}
 
 	private void initLabel() {
@@ -106,13 +93,8 @@ public class RenamableTab {
 		textField.requestFocus();
 	}
 
-	private void updateOrLeave() {
-		final String text = textField.getText();
-		if (text.isEmpty()) {
-			textField.requestFocus();
-		} else {
-			label.setText(text);
-			tab.setGraphic(label);
-		}
+	private void updateText(String text) {
+		label.setText(text);
+		tab.setGraphic(label);
 	}
 }
