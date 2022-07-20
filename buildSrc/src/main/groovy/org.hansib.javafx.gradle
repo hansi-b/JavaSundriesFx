@@ -1,0 +1,29 @@
+plugins {
+	id 'org.openjfx.javafxplugin'
+}
+
+dependencies {
+
+	testImplementation 'org.hamcrest:hamcrest-core:2.2'
+	testImplementation 'org.testfx:testfx-core:4.0.16-alpha'
+	testImplementation 'org.testfx:testfx-spock:4.0.16-alpha'
+
+	testRuntimeOnly 'org.testfx:openjfx-monocle:jdk-12.0.1+2'
+}
+
+javafx {
+	version = '17'
+}
+
+test {
+	doFirst {
+		def headlessFxMode = Boolean.getBoolean('headlessFxMode')
+		print "headlessFxMode = $headlessFxMode"
+		if (headlessFxMode) {
+			System.setProperty('testfx.robot', 'glass')
+			System.setProperty('testfx.headless', 'true')
+			System.setProperty('prism.order', 'sw')
+			System.setProperty('prism.text', 't2k')
+		}
+	}
+}

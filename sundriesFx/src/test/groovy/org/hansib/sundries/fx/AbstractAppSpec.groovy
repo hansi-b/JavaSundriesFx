@@ -13,17 +13,6 @@ abstract public class AbstractAppSpec extends ApplicationSpec {
 
 	Stage stage
 
-	def setupSpec() {
-		def isHeadless = Boolean.getBoolean('headless')
-		log.info "HEADLESS MODE = $isHeadless"
-		if (isHeadless) {
-			System.setProperty('testfx.robot', 'glass')
-			System.setProperty('testfx.headless', 'true')
-			System.setProperty('prism.order', 'sw')
-			System.setProperty('prism.text', 't2k')
-		}
-	}
-
 	@Override
 	void init() throws Exception {
 		stage = FxToolkit.registerPrimaryStage()
