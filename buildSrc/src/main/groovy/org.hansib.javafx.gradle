@@ -16,14 +16,12 @@ javafx {
 }
 
 test {
-	doFirst {
-		def headlessFxMode = Boolean.getBoolean('headlessFxMode')
-		print "headlessFxMode = $headlessFxMode"
-		if (headlessFxMode) {
-			System.setProperty('testfx.robot', 'glass')
-			System.setProperty('testfx.headless', 'true')
-			System.setProperty('prism.order', 'sw')
-			System.setProperty('prism.text', 't2k')
-		}
+	def isHeadlessFxMode = Boolean.valueOf(findProperty('headlessFxMode') ?: "false")
+	print "headlessFxMode = $isHeadlessFxMode"
+	if (isHeadlessFxMode) {
+		systemProperty 'testfx.robot', 'glass'
+		systemProperty 'testfx.headless', 'true'
+		systemProperty 'prism.order', 'sw'
+		systemProperty 'prism.text', 't2k'
 	}
 }
