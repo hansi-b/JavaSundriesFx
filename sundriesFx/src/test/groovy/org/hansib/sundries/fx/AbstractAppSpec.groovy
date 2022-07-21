@@ -11,19 +11,15 @@ import javafx.stage.Stage
 abstract public class AbstractAppSpec extends ApplicationSpec {
 	static final Logger log = LogManager.getLogger(AbstractAppSpec)
 
-	Stage stage
-
-	@Override
-	void init() throws Exception {
-		stage = FxToolkit.registerPrimaryStage()
-		log.info "INIT=$stage"
-	}
+	protected Stage stage
 
 	@Override
 	public void start(Stage stage) throws Exception {
-		stage.setScene(createScene())
-		stage.show()
+		this.stage = FxToolkit.registerPrimaryStage()
+		log.info "INIT=$stage"
+		FxToolkit.setupScene(() -> createScene())
+		FxToolkit.showStage()
 	}
 
-	abstract Scene createScene();
+	protected abstract Scene createScene();
 }

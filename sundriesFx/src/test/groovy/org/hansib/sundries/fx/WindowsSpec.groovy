@@ -1,17 +1,10 @@
 package org.hansib.sundries.fx
 
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
-import org.testfx.api.FxToolkit
-import org.testfx.framework.spock.ApplicationSpec
-
-import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.scene.control.Alert
 import javafx.scene.control.Alert.AlertType
 import javafx.scene.control.Button
 import javafx.scene.layout.StackPane
-import javafx.stage.Stage
 
 public class WindowsSpec extends AbstractAppSpec {
 
