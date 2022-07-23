@@ -100,4 +100,25 @@ public class TextFieldValidationSpec extends AbstractAppSpec {
 		textField.focused
 		result.get() == ""
 	}
+
+	def 'custom css is applied'() {
+
+		when:
+		new TextFieldValidation(textField).withInvalidCssStyleClass("invalid-css").build()
+
+		then:
+		textField.getStyleClass().contains("invalid-css")
+
+		when:
+		write("x")
+
+		then:
+		!textField.getStyleClass().contains("invalid-css")
+
+		when:
+		push(KeyCode.BACK_SPACE)
+
+		then:
+		textField.getStyleClass().contains("invalid-css")
+	}
 }

@@ -55,14 +55,23 @@ public class TextFieldValidation {
 					validate();
 			});
 
-			if (invalidTextCssStyleClass != null)
-				textField.textProperty().addListener((observable, oldValue, newValue) -> {
-					final ObservableList<String> styleClass = textField.getStyleClass();
-					if (isTextValid.test(newValue))
-						styleClass.removeIf(invalidTextCssStyleClass::equals);
-					else if (!styleClass.contains(invalidTextCssStyleClass))
-						styleClass.add(invalidTextCssStyleClass);
+			if (invalidTextCssStyleClass != null) {
+				textField.textProperty().addListener((observable, oldValue, newValue) -> updateCssStyle(newValue));
+				textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+					if (Boolean.TRUE.equals(newValue))
+						updateCssStyle(textField.getText());
 				});
+				if (textField.isFocused())
+					updateCssStyle(textField.getText());
+			}
+		}
+
+		private void updateCssStyle(String newValue) {
+			final ObservableList<String> styleClass = textField.getStyleClass();
+			if (isTextValid.test(newValue))
+				styleClass.removeIf(invalidTextCssStyleClass::equals);
+			else if (!styleClass.contains(invalidTextCssStyleClass))
+				styleClass.add(invalidTextCssStyleClass);
 		}
 
 		private void validate() {
