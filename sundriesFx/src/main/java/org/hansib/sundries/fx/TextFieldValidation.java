@@ -40,7 +40,7 @@ public class TextFieldValidation {
 		private final String invalidTextCssStyleClass;
 
 		private ValidationWrapper(TextField textField, Predicate<String> isTextValid,
-				Consumer<String> validatedTextCallback, String invalidTextCssStyleClass) {
+		        Consumer<String> validatedTextCallback, String invalidTextCssStyleClass) {
 			this.textField = textField;
 			this.isTextValid = isTextValid;
 			this.validatedTextCallback = validatedTextCallback;
@@ -58,12 +58,10 @@ public class TextFieldValidation {
 			if (invalidTextCssStyleClass != null)
 				textField.textProperty().addListener((observable, oldValue, newValue) -> {
 					final ObservableList<String> styleClass = textField.getStyleClass();
-					if (isTextValid.test(newValue)) {
+					if (isTextValid.test(newValue))
 						styleClass.removeIf(invalidTextCssStyleClass::equals);
-					} else {
-						if (!styleClass.contains(invalidTextCssStyleClass))
-							styleClass.add(invalidTextCssStyleClass);
-					}
+					else if (!styleClass.contains(invalidTextCssStyleClass))
+						styleClass.add(invalidTextCssStyleClass);
 				});
 		}
 
@@ -76,15 +74,13 @@ public class TextFieldValidation {
 		}
 	}
 
-	public static final String CSS_INVALID_TEXT = "validating-text-field-invalid-text";
-
 	private TextField textField;
 
 	private Predicate<String> isTextValid;
 
 	private Consumer<String> validatedTextCallback;
 
-	private String invalidTextCssStyleClass = CSS_INVALID_TEXT;
+	private String invalidTextCssStyleClass;
 
 	public TextFieldValidation() {
 		this(null);
@@ -116,10 +112,10 @@ public class TextFieldValidation {
 
 	public TextField build() {
 		ValidationWrapper wrapper = new ValidationWrapper(//
-				textField != null ? textField : new TextField(), //
-				isTextValid != null ? isTextValid : this::isNullOrBlank, //
-				validatedTextCallback, //
-				invalidTextCssStyleClass);
+		        textField != null ? textField : new TextField(), //
+		        isTextValid != null ? isTextValid : this::isNullOrBlank, //
+		        validatedTextCallback, //
+		        invalidTextCssStyleClass);
 
 		wrapper.init();
 		textField = null;
