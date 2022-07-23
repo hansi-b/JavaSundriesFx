@@ -22,4 +22,10 @@ abstract public class AbstractAppSpec extends ApplicationSpec {
 	}
 
 	protected abstract Scene createScene();
+
+
+	@Override
+	void stop() throws Exception {
+		FxToolkit.cleanupStages()
+	}
 }
