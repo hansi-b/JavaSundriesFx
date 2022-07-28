@@ -23,7 +23,7 @@ public class TextFieldValidationSpec extends AbstractAppSpec {
 	def 'successful validation allows focus change'() {
 
 		given:
-		new TextFieldValidation(textField).build()
+		new TextFieldValidation().build(textField)
 
 		when:
 		clickOn(textField)
@@ -37,7 +37,7 @@ public class TextFieldValidationSpec extends AbstractAppSpec {
 	def 'failing default validation forces back focus'() {
 
 		given:
-		new TextFieldValidation(textField).build()
+		new TextFieldValidation().build(textField)
 
 		when:
 		clickOn(textField) // is empty
@@ -50,7 +50,7 @@ public class TextFieldValidationSpec extends AbstractAppSpec {
 	def 'can use custom validation'() {
 
 		given:
-		new TextFieldValidation(textField).withValidation(t -> "x".compareTo(t) < 0).build();
+		new TextFieldValidation().withValidation(t -> "x".compareTo(t) < 0).build(textField)
 
 		when:
 		clickOn(textField)
@@ -73,7 +73,7 @@ public class TextFieldValidationSpec extends AbstractAppSpec {
 
 		given:
 		AtomicReference<String> result = new AtomicReference("")
-		new TextFieldValidation(textField).withValidatedTextCallback(t -> result.set(t)).build();
+		new TextFieldValidation().withValidatedTextCallback(t -> result.set(t)).build(textField)
 
 		when:
 		clickOn(textField) // is empty
@@ -89,7 +89,7 @@ public class TextFieldValidationSpec extends AbstractAppSpec {
 
 		given:
 		AtomicReference<String> result = new AtomicReference("")
-		new TextFieldValidation(textField).withValidation(t -> "x".compareTo(t) < 0).withValidatedTextCallback(t -> result.set(t)).build();
+		new TextFieldValidation().withValidation(t -> "x".compareTo(t) < 0).withValidatedTextCallback(t -> result.set(t)).build(textField)
 
 		when:
 		clickOn(textField) // is empty
@@ -104,7 +104,7 @@ public class TextFieldValidationSpec extends AbstractAppSpec {
 	def 'custom css is applied'() {
 
 		when:
-		new TextFieldValidation(textField).withInvalidCssStyleClass("invalid-css").build()
+		new TextFieldValidation().withInvalidCssStyleClass("invalid-css").build(textField)
 
 		then:
 		textField.getStyleClass().contains("invalid-css")
