@@ -23,7 +23,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.hansib.sundries.fx;
+package org.hansib.sundries.fx.table;
 
 import java.util.stream.Collectors;
 
