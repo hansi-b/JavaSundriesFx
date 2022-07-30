@@ -14,7 +14,7 @@ dependencies {
 testing {
 	suites {
 		test {
-			useJUnitJupiter('5.8.2')
+			useJUnitJupiter('5.9.0')
 		}
 	}
 }
@@ -22,5 +22,5 @@ testing {
 test {
 	testLogging.showStandardStreams = true
 	jvmArgs "-Dheadless=${project.hasProperty('headless') ? project.headless : false}",
-	'-Dlog4j.configurationFile=log4j2_test.yaml'
+			'-Dlog4j.configurationFile=log4j2_test.yaml'
 }
