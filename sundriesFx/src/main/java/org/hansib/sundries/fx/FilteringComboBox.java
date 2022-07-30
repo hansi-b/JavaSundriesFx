@@ -1,7 +1,7 @@
 package org.hansib.sundries.fx;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -20,23 +20,27 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.util.StringConverter;
 
-public class FilteringComboBox {
+/**
+ * Helps augment a combo box with a selection filter on its items.
+ */
+public class FilteringComboBox<E> {
 	private static final Logger log = LogManager.getLogger();
 
-	public static <E> void initialise(ComboBox<E> comboBox, Supplier<List<E>> valuesGetter,
-			Function<Set<String>, Predicate<E>> matchBuilder, StringConverter<E> stringConverter, Runnable onEnter) {
+	private Supplier<Collection<E>> itemsSupplier;
 
-		ObservableList<E> items = FXCollections.observableArrayList();
-		FilteredList<E> filteredItems = new FilteredList<>(items, p -> true);
+	private ComboBox<E> comboBox;
 
-		comboBox.setItems(filteredItems);
+	public FilteringComboBox(ComboBox<E> comboBox) {
+		this.comboBox = comboBox;
+	}
+
+	public FilteringComboBox<E> initialise(Function<Set<String>, Predicate<E>> matchBuilder,
+			StringConverter<E> stringConverter, Runnable onEnter) {
+
+		FilteredList<E> filteredItems = initialiseFilteredItems();
+
 		comboBox.setEditable(true);
 
-		comboBox.getEditor().addEventHandler(KeyEvent.KEY_PRESSED, e -> {
-			if (e.getCode() == KeyCode.ENTER) {
-				onEnter.run();
-			}
-		});
 		comboBox.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
 			E selected = comboBox.getSelectionModel().getSelectedItem();
 			log.info("selected = {}", selected);
@@ -55,12 +59,40 @@ public class FilteringComboBox {
 				}
 			});
 		});
-		comboBox.focusedProperty().addListener((observable, oldValue, newValue) -> {
-			if (Boolean.TRUE.equals(newValue)) {
-				items.setAll(valuesGetter.get());
+
+		comboBox.getEditor().addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+			if (e.getCode() == KeyCode.ENTER) {
+				onEnter.run();
 			}
 		});
 		comboBox.setConverter(stringConverter);
+
+		return this;
+	}
+
+	public FilteringComboBox<E> withItemsUpdateOnFocus(Supplier<Collection<E>> itemsSupplier) {
+
+		this.itemsSupplier = itemsSupplier;
+		return this;
+	}
+
+	private FilteredList<E> initialiseFilteredItems() {
+		ObservableList<E> items = FXCollections.observableArrayList();
+		items.setAll(itemsSupplier.get());
+		FilteredList<E> filteredList = new FilteredList<>(items, p -> true);
+		comboBox.setItems(filteredList);
+
+		comboBox.focusedProperty().addListener((observable, oldValue, newValue) -> {
+			if (Boolean.TRUE.equals(newValue)) {
+				items.setAll(itemsSupplier.get());
+			}
+		});
+		return filteredList;
+	}
+
+	public ComboBox<E> build() {
+		initialiseFilteredItems();
+		return comboBox;
 	}
 
 }
