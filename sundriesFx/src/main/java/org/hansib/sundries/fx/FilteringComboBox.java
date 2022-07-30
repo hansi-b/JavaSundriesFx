@@ -35,9 +35,9 @@ import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hansib.sundries.Errors;
 
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.scene.control.ComboBox;
@@ -102,11 +102,13 @@ public class FilteringComboBox<E> {
 	}
 
 	private FilteredList<E> initialiseFilteredItems() {
-		ObservableList<E> items = FXCollections.observableArrayList();
-		items.setAll(itemsSupplier.get());
+		ObservableList<E> items = comboBox.getItems();
+		if (items instanceof FilteredList<E>)
+			throw Errors.illegalArg("Items on %s must not be a filtered list", comboBox);
 		FilteredList<E> filteredList = new FilteredList<>(items, p -> true);
 		comboBox.setItems(filteredList);
 
+		items.setAll(itemsSupplier.get());
 		comboBox.focusedProperty().addListener((observable, oldValue, newValue) -> {
 			if (Boolean.TRUE.equals(newValue)) {
 				items.setAll(itemsSupplier.get());

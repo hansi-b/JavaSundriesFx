@@ -21,7 +21,7 @@ public class FilteringComboBoxSpec extends AbstractAppSpec {
 	def 'can update items on focus'() {
 
 		given:
-		def items = comboBox.getItems();
+		def items = []
 		new FilteringComboBox(comboBox).withItemsUpdateOnFocus(() -> items).build()
 
 		when:
