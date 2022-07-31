@@ -54,15 +54,27 @@ public class FilteringComboBox<E> {
 
 	private Runnable onEnter;
 
+	private Function<Set<String>, Predicate<E>> matchBuilder;
+
 	public FilteringComboBox(ComboBox<E> comboBox) {
 		this.comboBox = comboBox;
 	}
 
-	public FilteringComboBox<E> initialise(Function<Set<String>, Predicate<E>> matchBuilder) {
-		comboBox.setEditable(true);
+	public FilteringComboBox<E> withWordsFilterBuilder(Function<Set<String>, Predicate<E>> matchBuilder) {
+
+		this.matchBuilder = matchBuilder;
+		return this;
+	}
+
+	private void initialiseWordsFilter() {
 
 		FilteredList<E> filteredItems = initialiseFilteredItems();
+		if (matchBuilder != null)
+			Platform.runLater(() -> initialiseFilterListener(filteredItems));
+	}
 
+	private void initialiseFilterListener(FilteredList<E> filteredItems) {
+		comboBox.setEditable(true);
 		comboBox.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
 			E selected = comboBox.getSelectionModel().getSelectedItem();
 			log.info("selected = {}", selected);
@@ -81,14 +93,21 @@ public class FilteringComboBox<E> {
 				}
 			});
 		});
-
-		return this;
 	}
 
 	public FilteringComboBox<E> withActionOnEnter(Runnable onEnter) {
 
 		this.onEnter = onEnter;
 		return this;
+	}
+
+	private void initialiseActionOnEnter() {
+		if (onEnter != null)
+			comboBox.getEditor().addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+				if (e.getCode() == KeyCode.ENTER) {
+					onEnter.run();
+				}
+			});
 	}
 
 	public FilteringComboBox<E> withConverter(StringConverter<E> stringConverter) {
@@ -107,13 +126,8 @@ public class FilteringComboBox<E> {
 	}
 
 	public ComboBox<E> build() {
-		if (onEnter != null)
-			comboBox.getEditor().addEventHandler(KeyEvent.KEY_PRESSED, e -> {
-				if (e.getCode() == KeyCode.ENTER) {
-					onEnter.run();
-				}
-			});
+		initialiseWordsFilter();
+		initialiseActionOnEnter();
 		return comboBox;
 	}
-
 }
