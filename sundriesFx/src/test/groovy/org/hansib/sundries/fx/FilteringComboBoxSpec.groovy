@@ -18,14 +18,13 @@ public class FilteringComboBoxSpec extends AbstractAppSpec {
 		return new Scene(new HBox(comboBox, button))
 	}
 
-	def 'can update items on focus'() {
+	def 'can later change original items from comboBox'() {
 
 		given:
-		def items = []
-		new FilteringComboBox(comboBox).withItemsUpdateOnFocus(() -> items).build()
+		def items = comboBox.items
+		new FilteringComboBox(comboBox).build()
 
 		when:
-		clickOn(button)
 		['one', 'two'].each { items << it }
 		clickOn(comboBox)
 		type(KeyCode.ENTER)

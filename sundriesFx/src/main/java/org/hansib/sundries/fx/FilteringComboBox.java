@@ -26,11 +26,9 @@
 package org.hansib.sundries.fx;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
@@ -49,22 +47,19 @@ import javafx.util.StringConverter;
  * Helps augment a combo box with a selection filter on its items.
  */
 public class FilteringComboBox<E> {
+
 	private static final Logger log = LogManager.getLogger();
 
-	private Supplier<Collection<E>> itemsSupplier;
-
-	private ComboBox<E> comboBox;
+	private final ComboBox<E> comboBox;
 
 	public FilteringComboBox(ComboBox<E> comboBox) {
 		this.comboBox = comboBox;
 	}
 
-	public FilteringComboBox<E> initialise(Function<Set<String>, Predicate<E>> matchBuilder,
-			StringConverter<E> stringConverter, Runnable onEnter) {
+	public FilteringComboBox<E> initialise(Function<Set<String>, Predicate<E>> matchBuilder, Runnable onEnter) {
+		comboBox.setEditable(true);
 
 		FilteredList<E> filteredItems = initialiseFilteredItems();
-
-		comboBox.setEditable(true);
 
 		comboBox.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
 			E selected = comboBox.getSelectionModel().getSelectedItem();
@@ -90,14 +85,12 @@ public class FilteringComboBox<E> {
 				onEnter.run();
 			}
 		});
-		comboBox.setConverter(stringConverter);
 
 		return this;
 	}
 
-	public FilteringComboBox<E> withItemsUpdateOnFocus(Supplier<Collection<E>> itemsSupplier) {
-
-		this.itemsSupplier = itemsSupplier;
+	public FilteringComboBox<E> withConverter(StringConverter<E> stringConverter) {
+		comboBox.setConverter(stringConverter);
 		return this;
 	}
 
@@ -108,17 +101,10 @@ public class FilteringComboBox<E> {
 		FilteredList<E> filteredList = new FilteredList<>(items, p -> true);
 		comboBox.setItems(filteredList);
 
-		items.setAll(itemsSupplier.get());
-		comboBox.focusedProperty().addListener((observable, oldValue, newValue) -> {
-			if (Boolean.TRUE.equals(newValue)) {
-				items.setAll(itemsSupplier.get());
-			}
-		});
 		return filteredList;
 	}
 
 	public ComboBox<E> build() {
-		initialiseFilteredItems();
 		return comboBox;
 	}
 
