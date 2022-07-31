@@ -52,11 +52,13 @@ public class FilteringComboBox<E> {
 
 	private final ComboBox<E> comboBox;
 
+	private Runnable onEnter;
+
 	public FilteringComboBox(ComboBox<E> comboBox) {
 		this.comboBox = comboBox;
 	}
 
-	public FilteringComboBox<E> initialise(Function<Set<String>, Predicate<E>> matchBuilder, Runnable onEnter) {
+	public FilteringComboBox<E> initialise(Function<Set<String>, Predicate<E>> matchBuilder) {
 		comboBox.setEditable(true);
 
 		FilteredList<E> filteredItems = initialiseFilteredItems();
@@ -80,12 +82,12 @@ public class FilteringComboBox<E> {
 			});
 		});
 
-		comboBox.getEditor().addEventHandler(KeyEvent.KEY_PRESSED, e -> {
-			if (e.getCode() == KeyCode.ENTER) {
-				onEnter.run();
-			}
-		});
+		return this;
+	}
 
+	public FilteringComboBox<E> withActionOnEnter(Runnable onEnter) {
+
+		this.onEnter = onEnter;
 		return this;
 	}
 
@@ -105,6 +107,12 @@ public class FilteringComboBox<E> {
 	}
 
 	public ComboBox<E> build() {
+		if (onEnter != null)
+			comboBox.getEditor().addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+				if (e.getCode() == KeyCode.ENTER) {
+					onEnter.run();
+				}
+			});
 		return comboBox;
 	}
 
