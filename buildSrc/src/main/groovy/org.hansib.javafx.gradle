@@ -17,7 +17,7 @@ javafx {
 
 test {
 	def isHeadlessFxMode = Boolean.valueOf(findProperty('headlessFxMode') ?: "false")
-	print "headlessFxMode = $isHeadlessFxMode"
+	println "headlessFxMode = $isHeadlessFxMode"
 	if (isHeadlessFxMode) {
 		systemProperty 'testfx.robot', 'glass'
 		systemProperty 'testfx.headless', 'true'
