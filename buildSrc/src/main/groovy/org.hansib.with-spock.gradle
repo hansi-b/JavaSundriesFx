@@ -21,6 +21,5 @@ testing {
 
 test {
 	testLogging.showStandardStreams = true
-	jvmArgs "-Dheadless=${project.hasProperty('headless') ? project.headless : false}",
-			'-Dlog4j.configurationFile=log4j2_test.yaml'
+	jvmArgs '-Dlog4j.configurationFile=log4j2_test.yaml'
 }
