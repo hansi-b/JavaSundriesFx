@@ -68,6 +68,20 @@ public class FilteringComboBox<E> {
 		}
 	}
 
+	private static class StringSelectionFilterBuilder<E> implements SelectionFilterBuilder<E> {
+
+		private final Function<String, Predicate<E>> stringFilterBuilder;
+
+		StringSelectionFilterBuilder(Function<String, Predicate<E>> stringFilterBuilder) {
+			this.stringFilterBuilder = stringFilterBuilder;
+		}
+
+		@Override
+		public Predicate<E> buildFilter(String selection) {
+			return stringFilterBuilder.apply(selection);
+		}
+	}
+
 	private static final Logger log = LogManager.getLogger();
 
 	private final ComboBox<E> comboBox;
@@ -83,7 +97,17 @@ public class FilteringComboBox<E> {
 
 	public FilteringComboBox<E> withLcWordsFilterBuilder(Function<Set<String>, Predicate<E>> lcWordsFilterBuilder) {
 
+		if (selectionFilterBuilder != null)
+			throw Errors.illegalArg("Filter builder already set on FilteringComboBoxBuilder");
 		this.selectionFilterBuilder = new LcWordsSetSelectionFilterBuilder<>(lcWordsFilterBuilder);
+		return this;
+	}
+
+	public FilteringComboBox<E> withStringFilterBuilder(Function<String, Predicate<E>> lcWordsFilterBuilder) {
+
+		if (selectionFilterBuilder != null)
+			throw Errors.illegalArg("Filter builder already set on FilteringComboBoxBuilder");
+		this.selectionFilterBuilder = new StringSelectionFilterBuilder<>(lcWordsFilterBuilder);
 		return this;
 	}
 
