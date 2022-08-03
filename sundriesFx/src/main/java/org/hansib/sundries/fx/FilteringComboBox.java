@@ -51,48 +51,20 @@ public class FilteringComboBox<E> {
 	private static final Logger log = LogManager.getLogger();
 
 	private final ComboBox<E> comboBox;
+	private FilteredList<E> filteredList;
+
+	private Function<Set<String>, Predicate<E>> lcWordsFilterBuilder;
 
 	private Runnable onEnter;
-
-	private Function<Set<String>, Predicate<E>> matchBuilder;
 
 	public FilteringComboBox(ComboBox<E> comboBox) {
 		this.comboBox = comboBox;
 	}
 
-	public FilteringComboBox<E> withWordsFilterBuilder(Function<Set<String>, Predicate<E>> matchBuilder) {
+	public FilteringComboBox<E> withLcWordsFilterBuilder(Function<Set<String>, Predicate<E>> lcWordsFilterBuilder) {
 
-		this.matchBuilder = matchBuilder;
+		this.lcWordsFilterBuilder = lcWordsFilterBuilder;
 		return this;
-	}
-
-	private void initialiseWordsFilter() {
-
-		FilteredList<E> filteredItems = initialiseFilteredItems();
-		if (matchBuilder != null)
-			Platform.runLater(() -> initialiseFilterListener(filteredItems));
-	}
-
-	private void initialiseFilterListener(FilteredList<E> filteredItems) {
-		comboBox.setEditable(true);
-		comboBox.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
-			E selected = comboBox.getSelectionModel().getSelectedItem();
-			log.info("selected = {}", selected);
-			Platform.runLater(() -> {
-				Set<String> split = Arrays.stream(newValue.split("\\s+")).filter(s -> !s.isBlank())
-						.map(String::toLowerCase).collect(Collectors.toSet());
-				Predicate<E> matcher = matchBuilder.apply(split);
-				// If the no item in the list is selected or the selected item
-				// isn't equal to the current input, we refilter the list.
-				// if (selected == null || !selected.equals(cb.getEditor().getText())) {
-				if (selected == null) {
-					comboBox.hide();
-					filteredItems.setPredicate(matcher::test);
-					log.info("after pred: {}", filteredItems);
-					comboBox.show();
-				}
-			});
-		});
 	}
 
 	public FilteringComboBox<E> withActionOnEnter(Runnable onEnter) {
@@ -115,18 +87,51 @@ public class FilteringComboBox<E> {
 		return this;
 	}
 
-	private FilteredList<E> initialiseFilteredItems() {
+	private void initialiseFilteredList() {
 		ObservableList<E> items = comboBox.getItems();
 		if (items instanceof FilteredList<E>)
 			throw Errors.illegalArg("Items on %s must not be a filtered list", comboBox);
-		FilteredList<E> filteredList = new FilteredList<>(items, p -> true);
+		filteredList = new FilteredList<>(items, p -> true);
 		comboBox.setItems(filteredList);
+	}
 
-		return filteredList;
+	private void initialiseLcWordsFilter() {
+
+		if (lcWordsFilterBuilder != null) {
+			Function<String, Predicate<E>> filterBuilder = this::buildPredicateByLcWords;
+			Platform.runLater(() -> initialiseSelectionFilterListener(filterBuilder));
+		}
+	}
+
+	private Predicate<E> buildPredicateByLcWords(String newSelectionValue) {
+		Set<String> lcWords = Arrays.stream(newSelectionValue.split("\\s+")).filter(s -> !s.isBlank())
+				.map(String::toLowerCase).collect(Collectors.toSet());
+		return lcWordsFilterBuilder.apply(lcWords);
+	}
+
+	private void initialiseSelectionFilterListener(Function<String, Predicate<E>> filterBuilder) {
+		comboBox.setEditable(true);
+		comboBox.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
+			E selected = comboBox.getSelectionModel().getSelectedItem();
+			log.info("selected = {}", selected);
+			Platform.runLater(() -> {
+				Predicate<E> filter = filterBuilder.apply(newValue);
+				// If the no item in the list is selected or the selected item
+				// isn't equal to the current input, we refilter the list.
+				// if (selected == null || !selected.equals(cb.getEditor().getText())) {
+				if (selected == null) {
+					comboBox.hide();
+					filteredList.setPredicate(filter::test);
+					log.info("after pred: {}", filteredList);
+					comboBox.show();
+				}
+			});
+		});
 	}
 
 	public ComboBox<E> build() {
-		initialiseWordsFilter();
+		initialiseFilteredList();
+		initialiseLcWordsFilter();
 		initialiseActionOnEnter();
 		return comboBox;
 	}
