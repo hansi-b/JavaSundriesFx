@@ -48,12 +48,32 @@ import javafx.util.StringConverter;
  */
 public class FilteringComboBox<E> {
 
+	private static interface SelectionFilterBuilder<E> {
+		Predicate<E> buildFilter(String selection);
+	}
+
+	private static class LcWordsSetSelectionFilterBuilder<E> implements SelectionFilterBuilder<E> {
+
+		private final Function<Set<String>, Predicate<E>> lcWordsFilterBuilder;
+
+		LcWordsSetSelectionFilterBuilder(Function<Set<String>, Predicate<E>> lcWordsFilterBuilder) {
+			this.lcWordsFilterBuilder = lcWordsFilterBuilder;
+		}
+
+		@Override
+		public Predicate<E> buildFilter(String selection) {
+			Set<String> lcWords = Arrays.stream(selection.split("\\s+")).filter(s -> !s.isBlank())
+					.map(String::toLowerCase).collect(Collectors.toSet());
+			return lcWordsFilterBuilder.apply(lcWords);
+		}
+	}
+
 	private static final Logger log = LogManager.getLogger();
 
 	private final ComboBox<E> comboBox;
 	private FilteredList<E> filteredList;
 
-	private Function<Set<String>, Predicate<E>> lcWordsFilterBuilder;
+	private SelectionFilterBuilder<E> selectionFilterBuilder;
 
 	private Runnable onEnter;
 
@@ -63,7 +83,7 @@ public class FilteringComboBox<E> {
 
 	public FilteringComboBox<E> withLcWordsFilterBuilder(Function<Set<String>, Predicate<E>> lcWordsFilterBuilder) {
 
-		this.lcWordsFilterBuilder = lcWordsFilterBuilder;
+		this.selectionFilterBuilder = new LcWordsSetSelectionFilterBuilder<>(lcWordsFilterBuilder);
 		return this;
 	}
 
@@ -97,25 +117,18 @@ public class FilteringComboBox<E> {
 
 	private void initialiseLcWordsFilter() {
 
-		if (lcWordsFilterBuilder != null) {
-			Function<String, Predicate<E>> filterBuilder = this::buildPredicateByLcWords;
-			Platform.runLater(() -> initialiseSelectionFilterListener(filterBuilder));
+		if (selectionFilterBuilder != null) {
+			Platform.runLater(FilteringComboBox.this::initialiseSelectionFilterListener);
 		}
 	}
 
-	private Predicate<E> buildPredicateByLcWords(String newSelectionValue) {
-		Set<String> lcWords = Arrays.stream(newSelectionValue.split("\\s+")).filter(s -> !s.isBlank())
-				.map(String::toLowerCase).collect(Collectors.toSet());
-		return lcWordsFilterBuilder.apply(lcWords);
-	}
-
-	private void initialiseSelectionFilterListener(Function<String, Predicate<E>> filterBuilder) {
+	private void initialiseSelectionFilterListener() {
 		comboBox.setEditable(true);
 		comboBox.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
 			E selected = comboBox.getSelectionModel().getSelectedItem();
 			log.info("selected = {}", selected);
 			Platform.runLater(() -> {
-				Predicate<E> filter = filterBuilder.apply(newValue);
+				Predicate<E> filter = selectionFilterBuilder.buildFilter(newValue);
 				// If the no item in the list is selected or the selected item
 				// isn't equal to the current input, we refilter the list.
 				// if (selected == null || !selected.equals(cb.getEditor().getText())) {
