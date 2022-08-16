@@ -27,7 +27,6 @@ package org.hansib.sundries.fx.table;
 
 import java.util.function.Function;
 
-import javafx.beans.value.ChangeListener;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.Tooltip;
@@ -36,26 +35,27 @@ import javafx.util.Duration;
 
 public class TooltipCellDecorator<O, T> implements Callback<TableColumn<O, T>, TableCell<O, T>> {
 
-	private final Callback<TableColumn<O, T>, TableCell<O, T>> motherFactory;
-	private final Function<T, String> tipFunction;
+	private final Callback<TableColumn<O, T>, TableCell<O, T>> columnCellFactory;
+	private final Function<T, String> tooltipStringFunc;
 
-	private TooltipCellDecorator(final Callback<TableColumn<O, T>, TableCell<O, T>> motherFactory,
-			final Function<T, String> tipFunction) {
-		this.motherFactory = motherFactory;
-		this.tipFunction = tipFunction;
+	private TooltipCellDecorator(final Callback<TableColumn<O, T>, TableCell<O, T>> columnCellFactory,
+			final Function<T, String> tooltipStringFunc) {
+		this.columnCellFactory = columnCellFactory;
+		this.tooltipStringFunc = tooltipStringFunc;
 	}
 
-	public static <S, T> void decorateColumn(final TableColumn<S, T> column, final Function<T, String> tipFunction) {
-		column.setCellFactory(new TooltipCellDecorator<>(column.getCellFactory(), tipFunction));
+	public static <S, T> void decorateColumn(final TableColumn<S, T> column,
+			final Function<T, String> tooltipStringFunc) {
+		column.setCellFactory(new TooltipCellDecorator<>(column.getCellFactory(), tooltipStringFunc));
 	}
 
 	@Override
 	public TableCell<O, T> call(final TableColumn<O, T> col) {
-		final TableCell<O, T> cell = motherFactory.call(col);
+		final TableCell<O, T> cell = columnCellFactory.call(col);
 
-		cell.itemProperty().addListener((ChangeListener<T>) (observable, oldValue, newValue) -> {
+		cell.itemProperty().addListener((observable, oldValue, newValue) -> {
 
-			final String tipValue = tipFunction.apply(newValue);
+			final String tipValue = tooltipStringFunc.apply(newValue);
 			if (tipValue == null)
 				cell.setTooltip(null);
 			else {
@@ -68,7 +68,7 @@ public class TooltipCellDecorator<O, T> implements Callback<TableColumn<O, T>, T
 		return cell;
 	}
 
-	private Tooltip createTooltip() {
+	private static Tooltip createTooltip() {
 		final Tooltip tooltip = new Tooltip();
 		tooltip.setShowDelay(Duration.millis(700));
 		tooltip.setShowDuration(Duration.minutes(1));
