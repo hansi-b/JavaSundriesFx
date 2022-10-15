@@ -31,11 +31,7 @@ import javafx.util.StringConverter;
 
 public class Converters {
 
-	private Converters() {
-		// instantiation prevention
-	}
-
-	public static <E> StringConverter<E> stringConverter(Function<E, String> toStringCall,
+	public <E> StringConverter<E> stringConverter(Function<E, String> toStringCall,
 			Function<String, E> fromStringCall) {
 		return new StringConverter<E>() {
 
