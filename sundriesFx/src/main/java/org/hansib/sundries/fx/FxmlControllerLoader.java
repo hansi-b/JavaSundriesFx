@@ -12,8 +12,12 @@ public class FxmlControllerLoader {
 
 	private final ResourceLoader resourceLoader;
 
-	public FxmlControllerLoader(ResourceLoader resourceLoader) {
+	FxmlControllerLoader(ResourceLoader resourceLoader) {
 		this.resourceLoader = resourceLoader;
+	}
+
+	public FxmlControllerLoader() {
+		this(new ResourceLoader());
 	}
 
 	public <T> T getController(String fxmlName) {
