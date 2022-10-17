@@ -1,6 +1,7 @@
 package org.hansib.sundries.fx;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import org.hansib.sundries.Errors;
@@ -29,20 +30,22 @@ public class FxmlControllerLoader {
 	 *                               on loading the fxml content
 	 */
 	public <C, P> C loadAndGetController(String fxmlName) {
-		FXMLLoader fxmlLoader = getFxmlLoader(fxmlName);
-		try {
-			fxmlLoader.load();
-		} catch (IOException e) {
-			throw Errors.illegalState(e, "Encountered exception loading '%s'", fxmlName);
-		}
-		return fxmlLoader.getController();
+		return loadAndGetControllerInternal(fxmlName, null);
 	}
 
 	/**
+	 * @param loadConsumer the consumer for the result of type P of loading the FXML
 	 * @throws IllegalStateException thrown as a wrapper if an IOException is thrown
 	 *                               on loading the fxml content
+	 * @throws NullPointerException  on a null loadConsumer
+	 * 
 	 */
 	public <C, P> C loadAndGetController(String fxmlName, Consumer<P> loadConsumer) {
+		Objects.requireNonNull(loadConsumer);
+		return loadAndGetControllerInternal(fxmlName, loadConsumer);
+	}
+
+	private <C, P> C loadAndGetControllerInternal(String fxmlName, Consumer<P> loadConsumer) {
 		FXMLLoader fxmlLoader = getFxmlLoader(fxmlName);
 		P load;
 		try {
@@ -50,7 +53,8 @@ public class FxmlControllerLoader {
 		} catch (IOException e) {
 			throw Errors.illegalState(e, "Encountered exception loading '%s'", fxmlName);
 		}
-		loadConsumer.accept(load);
+		if (loadConsumer != null)
+			loadConsumer.accept(load);
 		return fxmlLoader.getController();
 	}
 

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+
+<TableView xmlns:fx="http://javafx.com/fxml"
+	xmlns="http://javafx.com/javafx" fx:id = "testTable"
+	fx:controller="org.hansib.sundries.fx.LoadTestController">
+	<columns>
+		<TableColumn fx:id="firstCol" text="FirstCol" />
+	</columns>
+</TableView>
