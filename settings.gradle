@@ -1,2 +1,4 @@
 rootProject.name = 'SundriesFx'
 include 'sundriesFx'
+
+if (file('../Sundries').exists()) includeBuild '../Sundries'
