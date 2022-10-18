@@ -39,11 +39,16 @@ public class FxmlControllerLoader {
 	private final ResourceLoader resourceLoader;
 
 	FxmlControllerLoader(ResourceLoader resourceLoader) {
+		Objects.requireNonNull(resourceLoader);
 		this.resourceLoader = resourceLoader;
 	}
 
 	public FxmlControllerLoader() {
 		this(new ResourceLoader());
+	}
+
+	public ResourceLoader getResourceLoader() {
+		return resourceLoader;
 	}
 
 	public <T> T getController(String fxmlName) {
