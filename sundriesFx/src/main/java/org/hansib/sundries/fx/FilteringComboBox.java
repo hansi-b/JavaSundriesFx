@@ -150,7 +150,7 @@ public class FilteringComboBox<E> {
 		comboBox.setEditable(true);
 		comboBox.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
 			E selected = comboBox.getSelectionModel().getSelectedItem();
-			log.info("selected = {}", selected);
+			log.debug("selected = {}", selected);
 			Platform.runLater(() -> {
 				Predicate<E> filter = selectionFilterBuilder.buildFilter(newValue);
 				// If the no item in the list is selected or the selected item
@@ -159,7 +159,7 @@ public class FilteringComboBox<E> {
 				if (selected == null) {
 					comboBox.hide();
 					filteredList.setPredicate(filter::test);
-					log.info("after pred: {}", filteredList);
+					log.debug("after pred: {}", filteredList);
 					comboBox.show();
 				}
 			});
