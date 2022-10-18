@@ -33,33 +33,51 @@ import org.hansib.sundries.Errors;
 import org.hansib.sundries.ResourceLoader;
 
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
 public class FxmlControllerLoader {
 
+	private final String fxmlResourcePattern;
 	private final ResourceLoader resourceLoader;
 
-	FxmlControllerLoader(ResourceLoader resourceLoader) {
+	FxmlControllerLoader(String fxmlSourceStringFormat, ResourceLoader resourceLoader) {
 		Objects.requireNonNull(resourceLoader);
+		if (!fxmlSourceStringFormat.contains("%s"))
+			throw Errors.illegalArg("Argument fxmlSourceStringFormat '%s' does not contain String placeholder %%s",
+					fxmlSourceStringFormat);
+
+		this.fxmlResourcePattern = fxmlSourceStringFormat;
 		this.resourceLoader = resourceLoader;
 	}
 
+	/**
+	 * Instantiates a new loader with the default fxmlSourceStringFormat of
+	 * "fxml/%s"
+	 */
 	public FxmlControllerLoader() {
-		this(new ResourceLoader());
+		this("fxml/%s");
 	}
 
-	public ResourceLoader getResourceLoader() {
-		return resourceLoader;
+	/**
+	 * @param fxmlSourceStringFormat a String format pattern used to resolve
+	 *                               argument fxml Names passed to this
+	 *                               {@link FxmlControllerLoader}
+	 */
+	public FxmlControllerLoader(String fxmlSourceStringFormat) {
+		this(fxmlSourceStringFormat, new ResourceLoader());
 	}
 
-	public <T> T getController(String fxmlName) {
-		return getFxmlLoader(fxmlName).getController();
+	public <C> C loadToStage(String fxmlName, Stage stage) {
+		return loadAndGetController(fxmlName, (Parent p) -> stage.setScene(new Scene(p)));
 	}
 
 	/**
 	 * @throws IllegalStateException thrown as a wrapper if an IOException is thrown
 	 *                               on loading the fxml content
 	 */
-	public <C, P> C loadAndGetController(String fxmlName) {
+	public <C> C loadAndGetController(String fxmlName) {
 		return loadAndGetControllerInternal(fxmlName, null);
 	}
 
@@ -89,6 +107,6 @@ public class FxmlControllerLoader {
 	}
 
 	private FXMLLoader getFxmlLoader(String fxmlName) {
-		return new FXMLLoader(resourceLoader.getResourceUrl("fxml/" + fxmlName));
+		return new FXMLLoader(resourceLoader.getResourceUrl(String.format(fxmlResourcePattern, fxmlName)));
 	}
 }
