@@ -78,6 +78,11 @@ public class RenamableTab {
 		});
 	}
 
+	private void updateText(String text) {
+		label.setText(text);
+		tab.setGraphic(label);
+	}
+
 	public Tab getTab() {
 		return tab;
 	}
@@ -91,10 +96,5 @@ public class RenamableTab {
 		tab.setGraphic(textField);
 		textField.selectAll();
 		textField.requestFocus();
-	}
-
-	private void updateText(String text) {
-		label.setText(text);
-		tab.setGraphic(label);
 	}
 }
