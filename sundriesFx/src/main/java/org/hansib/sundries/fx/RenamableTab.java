@@ -27,6 +27,7 @@ package org.hansib.sundries.fx;
 
 import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
+import javafx.css.Styleable;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
@@ -51,22 +52,23 @@ public class RenamableTab {
 		tab.setGraphic(label);
 
 		tab.selectedProperty().addListener((observable, oldValue, newValue) -> {
-			final ObservableList<String> styleClass = label.getStyleClass();
-			if (Boolean.TRUE.equals(newValue)) {
-				styleClass.remove(CSS_RENAMABLE_TAB_UNSELECTED);
-				if (!styleClass.contains(CSS_RENAMABLE_TAB_SELECTED))
-					styleClass.add(CSS_RENAMABLE_TAB_SELECTED);
-			} else {
-				styleClass.remove(CSS_RENAMABLE_TAB_SELECTED);
-				if (!styleClass.contains(CSS_RENAMABLE_TAB_UNSELECTED))
-					styleClass.add(CSS_RENAMABLE_TAB_UNSELECTED);
-			}
+			if (Boolean.TRUE.equals(newValue))
+				toggleStyleClass(label, CSS_RENAMABLE_TAB_SELECTED, CSS_RENAMABLE_TAB_UNSELECTED);
+			else
+				toggleStyleClass(label, CSS_RENAMABLE_TAB_UNSELECTED, CSS_RENAMABLE_TAB_SELECTED);
 		});
 
 		textField = new TextFieldValidation() //
 				.withInvalidCssStyleClass(CSS_RENAMABLE_TAB_ERROR) //
 				.withValidatedTextCallback(this::updateText) //
 				.build();
+	}
+
+	private static void toggleStyleClass(Styleable styleable, String styleClassToAdd, String styleClassToRemove) {
+		final ObservableList<String> styleClass = styleable.getStyleClass();
+		styleClass.remove(styleClassToRemove);
+		if (!styleClass.contains(styleClassToAdd))
+			styleClass.add(styleClassToAdd);
 	}
 
 	private void initLabel() {
