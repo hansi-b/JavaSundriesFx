@@ -1,5 +1,6 @@
 plugins {
 	id 'groovy'
+	id 'jacoco'
 }
 
 repositories {
@@ -22,4 +23,11 @@ testing {
 test {
 	testLogging.showStandardStreams = true
 	jvmArgs '-Dlog4j.configurationFile=log4j2_test.yaml'
+}
+
+jacocoTestReport {
+	reports {
+		xml.required=true
+		html.required=false
+	}
 }
