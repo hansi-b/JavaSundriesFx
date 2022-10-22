@@ -119,7 +119,7 @@ public class FilteringComboBox<E> {
 
 	private void initialiseActionOnEnter() {
 		if (onEnter != null)
-			comboBox.getEditor().addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+			comboBox.getEditor().addEventHandler(KeyEvent.KEY_RELEASED, e -> {
 				if (e.getCode() == KeyCode.ENTER) {
 					onEnter.run();
 				}
