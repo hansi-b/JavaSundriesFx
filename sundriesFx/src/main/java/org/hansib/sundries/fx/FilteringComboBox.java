@@ -103,11 +103,11 @@ public class FilteringComboBox<E> {
 		return this;
 	}
 
-	public FilteringComboBox<E> withStringFilterBuilder(Function<String, Predicate<E>> lcWordsFilterBuilder) {
+	public FilteringComboBox<E> withStringFilterBuilder(Function<String, Predicate<E>> stringFilterBuilder) {
 
 		if (selectionFilterBuilder != null)
 			throw Errors.illegalArg("Filter builder already set on FilteringComboBoxBuilder");
-		this.selectionFilterBuilder = new StringSelectionFilterBuilder<>(lcWordsFilterBuilder);
+		this.selectionFilterBuilder = new StringSelectionFilterBuilder<>(stringFilterBuilder);
 		return this;
 	}
 
