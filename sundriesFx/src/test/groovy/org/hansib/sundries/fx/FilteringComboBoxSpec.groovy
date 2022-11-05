@@ -9,6 +9,7 @@ import javafx.scene.control.Button
 import javafx.scene.control.ComboBox
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.HBox
+import spock.lang.Ignore
 
 public class FilteringComboBoxSpec extends AbstractAppSpec {
 
@@ -64,6 +65,7 @@ public class FilteringComboBoxSpec extends AbstractAppSpec {
 		comboBox.getSelectionModel().getSelectedItem() == 'three'
 	}
 
+	@Ignore
 	def 'action on enter is called without string filter'() {
 
 		given:
