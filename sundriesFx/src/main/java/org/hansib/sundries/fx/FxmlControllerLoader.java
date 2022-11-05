@@ -28,6 +28,7 @@ package org.hansib.sundries.fx;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import org.hansib.sundries.Errors;
 import org.hansib.sundries.ResourceLoader;
@@ -71,6 +72,10 @@ public class FxmlControllerLoader {
 
 	public <C> C loadToStage(String fxmlName, Stage stage) {
 		return loadAndGetController(fxmlName, (Parent p) -> stage.setScene(new Scene(p)));
+	}
+
+	public <C> C loadToStage(String fxmlName, Stage stage, Function<Parent, Scene> sceneGetter) {
+		return loadAndGetController(fxmlName, (Parent p) -> stage.setScene(sceneGetter.apply(p)));
 	}
 
 	/**
