@@ -26,6 +26,7 @@
 package org.hansib.sundries.fx;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -36,14 +37,16 @@ import org.hansib.sundries.ResourceLoader;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
-public class FxmlControllerLoader {
+public class FxResourceLoader {
 
 	private final String fxmlResourcePattern;
 	private final ResourceLoader resourceLoader;
 
-	FxmlControllerLoader(String fxmlSourceStringFormat, ResourceLoader resourceLoader) {
+	FxResourceLoader(String fxmlSourceStringFormat, ResourceLoader resourceLoader) {
+
 		Objects.requireNonNull(resourceLoader);
 		if (!fxmlSourceStringFormat.contains("%s"))
 			throw Errors.illegalArg("Argument fxmlSourceStringFormat '%s' does not contain String placeholder %%s",
@@ -57,43 +60,49 @@ public class FxmlControllerLoader {
 	 * Instantiates a new loader with the default fxmlSourceStringFormat of
 	 * "fxml/%s"
 	 */
-	public FxmlControllerLoader() {
+	public FxResourceLoader() {
 		this("fxml/%s");
 	}
 
 	/**
 	 * @param fxmlSourceStringFormat a String format pattern used to resolve
 	 *                               argument fxml Names passed to this
-	 *                               {@link FxmlControllerLoader}
+	 *                               {@link FxResourceLoader}; must have one %s
+	 *                               String placeholder
 	 */
-	public FxmlControllerLoader(String fxmlSourceStringFormat) {
+	public FxResourceLoader(String fxmlSourceStringFormat) {
 		this(fxmlSourceStringFormat, new ResourceLoader());
 	}
 
-	public <C> C loadToStage(String fxmlName, Stage stage) {
-		return loadAndGetController(fxmlName, (Parent p) -> stage.setScene(new Scene(p)));
+	public <C> C loadFxmlToStage(String fxmlName, Stage stage) {
+		return loadFxmlAndGetController(fxmlName, (Parent p) -> stage.setScene(new Scene(p)));
 	}
 
-	public <C> C loadToStage(String fxmlName, Stage stage, Function<Parent, Scene> sceneGetter) {
-		return loadAndGetController(fxmlName, (Parent p) -> stage.setScene(sceneGetter.apply(p)));
+	public <C> C loadFxmlToStage(String fxmlName, Stage stage, Function<Parent, Scene> sceneGetter) {
+		return loadFxmlAndGetController(fxmlName, (Parent p) -> stage.setScene(sceneGetter.apply(p)));
 	}
 
 	/**
+	 * Loads the argument FXML file and returns the controller.
+	 * 
 	 * @throws IllegalStateException thrown as a wrapper if an IOException is thrown
 	 *                               on loading the fxml content
 	 */
-	public <C> C loadAndGetController(String fxmlName) {
+	public <C> C loadFxmlAndGetController(String fxmlName) {
 		return loadAndGetControllerInternal(fxmlName, null);
 	}
 
 	/**
+	 * Loads the argument FXML file, passes the contents to the argument consumer,
+	 * and returns the controller.
+	 * 
 	 * @param loadConsumer the consumer for the result of type P of loading the FXML
 	 * @throws IllegalStateException thrown as a wrapper if an IOException is thrown
 	 *                               on loading the fxml content
 	 * @throws NullPointerException  on a null loadConsumer
 	 * 
 	 */
-	public <C, P> C loadAndGetController(String fxmlName, Consumer<P> loadConsumer) {
+	public <C, P> C loadFxmlAndGetController(String fxmlName, Consumer<P> loadConsumer) {
 		Objects.requireNonNull(loadConsumer);
 		return loadAndGetControllerInternal(fxmlName, loadConsumer);
 	}
@@ -113,5 +122,11 @@ public class FxmlControllerLoader {
 
 	private FXMLLoader getFxmlLoader(String fxmlName) {
 		return new FXMLLoader(resourceLoader.getResourceUrl(String.format(fxmlResourcePattern, fxmlName)));
+	}
+
+	public Image loadImage(String imageName) {
+
+		final InputStream stream = resourceLoader.getResourceStream(imageName);
+		return stream == null ? null : new Image(stream);
 	}
 }
