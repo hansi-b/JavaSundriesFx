@@ -40,9 +40,9 @@ public class FilteringComboBoxSpec extends AbstractAppSpec {
 		comboBox.getSelectionModel().getSelectedItem() == 'one'
 	}
 
-	Function<String, Predicate<String>> containsMatcher = selection -> new Predicate<String>() {
+	Function<String, Predicate<String>> containsMatcher = new Function<String, Predicate<String>>() {
 		@Override
-		public boolean test(String value) {
+		public Predicate<String> apply(String value) {
 			return value.contains(selection);
 		}
 	}
