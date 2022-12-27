@@ -43,7 +43,7 @@ public class FilteringComboBoxSpec extends AbstractAppSpec {
 	Function<String, Predicate<String>> containsMatcher = new Function<String, Predicate<String>>() {
 		@Override
 		public Predicate<String> apply(String value) {
-			return value.contains(selection);
+			return (selection) -> selection.contains(value);
 		}
 	}
 
