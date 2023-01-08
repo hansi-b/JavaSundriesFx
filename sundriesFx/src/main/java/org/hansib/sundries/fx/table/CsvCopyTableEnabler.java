@@ -37,7 +37,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 
-public class CsvCopyTable {
+public class CsvCopyTableEnabler {
 	private static final KeyCodeCombination defaultCopyControlKey = new KeyCodeCombination(KeyCode.C,
 			KeyCombination.CONTROL_DOWN);
 	private static final KeyCodeCombination defaultSelectAllControlKey = new KeyCodeCombination(KeyCode.A,
@@ -46,11 +46,26 @@ public class CsvCopyTable {
 	/**
 	 * a table row that can be joined to a CSV String
 	 */
-	public static interface CsvRow {
+	public interface CsvRow {
 		String asCsv();
 	}
 
-	public static <T extends CsvRow> void setCsvCopy(final TableView<T> table) {
+	/**
+	 * Is called for the menu item strings.
+	 */
+	public interface MenuItemsLocalizer {
+		String selectAll();
+
+		String copySelection();
+	}
+
+	private final MenuItemsLocalizer menuItemsLocalizer;
+
+	public CsvCopyTableEnabler(MenuItemsLocalizer menuItemsLocalizer) {
+		this.menuItemsLocalizer = menuItemsLocalizer;
+	}
+
+	public <T extends CsvRow> void enableSelectAndCopyCapability(final TableView<T> table) {
 		table.setOnKeyReleased(e -> {
 			if (defaultCopyControlKey.match(e) && table == e.getSource())
 				copyCsvToClipboard(table);
@@ -60,13 +75,13 @@ public class CsvCopyTable {
 		addSelectCopyContextMenu(table);
 	}
 
-	private static <T extends CsvRow> void addSelectCopyContextMenu(final TableView<T> table) {
+	private <T extends CsvRow> void addSelectCopyContextMenu(final TableView<T> table) {
 		final ContextMenu cm = new ContextMenu();
-		final MenuItem selectAll = new MenuItem("Alles auswählen");
+		final MenuItem selectAll = new MenuItem(menuItemsLocalizer.selectAll());
 		selectAll.setOnAction(e -> table.getSelectionModel().selectAll());
 		cm.getItems().add(selectAll);
 
-		final MenuItem copySelection = new MenuItem("Auswahl kopieren");
+		final MenuItem copySelection = new MenuItem(menuItemsLocalizer.copySelection());
 		cm.getItems().add(copySelection);
 		copySelection.setOnAction(e -> copyCsvToClipboard(table));
 
