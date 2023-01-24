@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.testfx.api.FxToolkit
 import org.testfx.framework.spock.ApplicationSpec
+import org.testfx.util.WaitForAsyncUtils
 
 import javafx.scene.Scene
 import javafx.stage.Stage
@@ -23,6 +24,9 @@ abstract public class AbstractAppSpec extends ApplicationSpec {
 
 	protected abstract Scene createScene();
 
+	static void waitForAsyncFx(Runnable runnable) {
+		WaitForAsyncUtils.waitForAsyncFx(1_000, runnable)
+	}
 
 	@Override
 	void stop() throws Exception {
