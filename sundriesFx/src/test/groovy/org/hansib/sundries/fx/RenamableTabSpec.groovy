@@ -1,6 +1,5 @@
 package org.hansib.sundries.fx
 
-import javafx.application.Platform
 import javafx.scene.Scene
 import javafx.scene.control.TabPane
 import javafx.scene.input.KeyCode
@@ -15,7 +14,7 @@ public class RenamableTabSpec extends AbstractAppSpec {
 		tabPane = new TabPane()
 
 		renamableTab = new RenamableTab('first text')
-		Platform.runLater(() -> {
+		waitForAsyncFx(() -> {
 			tabPane.getTabs().add(renamableTab.getTab())
 		})
 		return new Scene(tabPane, 120, 40)

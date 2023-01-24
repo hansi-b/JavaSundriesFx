@@ -4,7 +4,6 @@ import javafx.scene.Scene
 import javafx.scene.control.Alert
 import javafx.scene.control.Alert.AlertType
 import javafx.scene.control.Button
-import javafx.scene.layout.StackPane
 
 public class WindowsSpec extends AbstractAppSpec {
 
@@ -18,7 +17,7 @@ public class WindowsSpec extends AbstractAppSpec {
 			popup.setTitle('Popup')
 			popup.showAndWait()
 		})
-		return new Scene(new StackPane(button))
+		return new Scene(button)
 	}
 
 	def 'can find simple stage'() {
