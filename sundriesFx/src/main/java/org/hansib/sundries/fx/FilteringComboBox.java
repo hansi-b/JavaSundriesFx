@@ -26,6 +26,7 @@
 package org.hansib.sundries.fx;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -39,6 +40,8 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Skin;
+import javafx.scene.control.skin.ComboBoxListViewSkin;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.util.StringConverter;
@@ -89,41 +92,43 @@ public class FilteringComboBox<E> {
 
 	private SelectionFilterBuilder<E> selectionFilterBuilder;
 
-	private Runnable onEnter;
+	private FilteringComboBox(ComboBox<E> comboBox, SelectionFilterBuilder<E> selectionFilterBuilder) {
+		Objects.requireNonNull(selectionFilterBuilder);
 
-	public FilteringComboBox(ComboBox<E> comboBox) {
 		this.comboBox = comboBox;
+		this.selectionFilterBuilder = selectionFilterBuilder;
 	}
 
-	public FilteringComboBox<E> withLcWordsFilterBuilder(Function<Set<String>, Predicate<E>> lcWordsFilterBuilder) {
-
-		if (selectionFilterBuilder != null)
-			throw Errors.illegalArg("Filter builder already set on FilteringComboBoxBuilder");
-		this.selectionFilterBuilder = new LcWordsSetSelectionFilterBuilder<>(lcWordsFilterBuilder);
-		return this;
+	public static <F> FilteringComboBox<F> lcWordsFilter(ComboBox<F> comboBox,
+			Function<Set<String>, Predicate<F>> lcWordsFilterBuilder) {
+		return new FilteringComboBox<>(comboBox, new LcWordsSetSelectionFilterBuilder<>(lcWordsFilterBuilder));
 	}
 
-	public FilteringComboBox<E> withStringFilterBuilder(Function<String, Predicate<E>> stringFilterBuilder) {
+	public static FilteringComboBox<String> lcAllWordsFilter(ComboBox<String> comboBox) {
 
-		if (selectionFilterBuilder != null)
-			throw Errors.illegalArg("Filter builder already set on FilteringComboBoxBuilder");
-		this.selectionFilterBuilder = new StringSelectionFilterBuilder<>(stringFilterBuilder);
-		return this;
+		Function<Set<String>, Predicate<String>> splitWordsFilter = lcSelectionWords -> item -> lcSelectionWords
+				.stream().allMatch(w -> item.toLowerCase().contains(w));
+		return new FilteringComboBox<>(comboBox, new LcWordsSetSelectionFilterBuilder<>(splitWordsFilter));
+	}
+
+	public static <F> FilteringComboBox<F> singleStringFilter(ComboBox<F> comboBox,
+			Function<String, Predicate<F>> stringFilterBuilder) {
+		return new FilteringComboBox<>(comboBox, new StringSelectionFilterBuilder<>(stringFilterBuilder));
+	}
+
+	public static FilteringComboBox<String> lcContainsFilter(ComboBox<String> comboBox) {
+		return singleStringFilter(comboBox,
+				value -> selection -> selection.toLowerCase().contains(value.toLowerCase()));
 	}
 
 	public FilteringComboBox<E> withActionOnEnter(Runnable onEnter) {
 
-		this.onEnter = onEnter;
+		comboBox.getEditor().addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+			if (e.getCode() == KeyCode.ENTER) {
+				onEnter.run();
+			}
+		});
 		return this;
-	}
-
-	private void initialiseActionOnEnter() {
-		if (onEnter != null)
-			comboBox.getEditor().addEventHandler(KeyEvent.KEY_RELEASED, e -> {
-				if (e.getCode() == KeyCode.ENTER) {
-					onEnter.run();
-				}
-			});
 	}
 
 	public FilteringComboBox<E> withConverter(StringConverter<E> stringConverter) {
@@ -135,27 +140,22 @@ public class FilteringComboBox<E> {
 		ObservableList<E> items = comboBox.getItems();
 		if (items instanceof FilteredList<E>)
 			throw Errors.illegalArg("Items on %s must not be a filtered list", comboBox);
-		filteredList = new FilteredList<>(items, p -> true);
+		filteredList = new FilteredList<>(items, null);
 		comboBox.setItems(filteredList);
 	}
 
-	private void initialiseLcWordsFilter() {
-
-		if (selectionFilterBuilder != null) {
-			Platform.runLater(FilteringComboBox.this::initialiseSelectionFilterListener);
-		}
-	}
-
-	private void initialiseSelectionFilterListener() {
-		comboBox.setEditable(true);
+	private void initialiseSelectionFilter() {
+		comboBox.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
+			if (event.getCode() == KeyCode.DOWN && !comboBox.isShowing()) {
+				comboBox.show();
+			}
+		});
 		comboBox.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
+
 			E selected = comboBox.getSelectionModel().getSelectedItem();
 			log.debug("selected = {}", selected);
 			Platform.runLater(() -> {
 				Predicate<E> filter = selectionFilterBuilder.buildFilter(newValue);
-				// If the no item in the list is selected or the selected item
-				// isn't equal to the current input, we refilter the list.
-				// if (selected == null || !selected.equals(cb.getEditor().getText())) {
 				if (selected == null) {
 					comboBox.hide();
 					filteredList.setPredicate(filter::test);
@@ -164,12 +164,32 @@ public class FilteringComboBox<E> {
 				}
 			});
 		});
+
+		Platform.runLater(() -> {
+			comboBox.setEditable(true);
+			preventSelectionBySpace();
+		});
+	}
+
+	/*
+	 * see https://bugs.openjdk.org/browse/JDK-8209991
+	 */
+	private void preventSelectionBySpace() {
+		Skin<?> skin = comboBox.getSkin();
+		if (skin instanceof ComboBoxListViewSkin<?> cblvSkin) {
+			cblvSkin.getPopupContent().addEventFilter(KeyEvent.ANY, event -> {
+				if (event.getCode() == KeyCode.SPACE) {
+					event.consume();
+				}
+			});
+		} else {
+			log.debug("Did not add space filter on {}", skin);
+		}
 	}
 
 	public ComboBox<E> build() {
 		initialiseFilteredList();
-		initialiseLcWordsFilter();
-		initialiseActionOnEnter();
+		initialiseSelectionFilter();
 		return comboBox;
 	}
 }
