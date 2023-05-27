@@ -27,9 +27,9 @@ package org.hansib.sundries.fx.table;
 
 import java.util.stream.Collectors;
 
+import org.hansib.sundries.fx.ContextMenuBuilder;
+
 import javafx.collections.ObservableList;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
@@ -72,20 +72,10 @@ public class CsvCopyTableEnabler {
 			else if (defaultSelectAllControlKey.match(e) && table == e.getSource())
 				table.getSelectionModel().selectAll();
 		});
-		addSelectCopyContextMenu(table);
-	}
-
-	private <T extends CsvRow> void addSelectCopyContextMenu(final TableView<T> table) {
-		final ContextMenu cm = new ContextMenu();
-		final MenuItem selectAll = new MenuItem(menuItemsLocalizer.selectAll());
-		selectAll.setOnAction(e -> table.getSelectionModel().selectAll());
-		cm.getItems().add(selectAll);
-
-		final MenuItem copySelection = new MenuItem(menuItemsLocalizer.copySelection());
-		cm.getItems().add(copySelection);
-		copySelection.setOnAction(e -> copyCsvToClipboard(table));
-
-		table.setContextMenu(cm);
+		table.setContextMenu(new ContextMenuBuilder() //
+				.item(menuItemsLocalizer.selectAll(), e -> table.getSelectionModel().selectAll()) //
+				.item(menuItemsLocalizer.copySelection(), e -> copyCsvToClipboard(table)) //
+				.build());
 	}
 
 	private static <T extends CsvRow> void copyCsvToClipboard(final TableView<T> table) {
