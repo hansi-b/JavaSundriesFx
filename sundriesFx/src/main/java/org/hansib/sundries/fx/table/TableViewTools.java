@@ -28,6 +28,7 @@ package org.hansib.sundries.fx.table;
 import java.util.function.Function;
 
 import javafx.beans.value.ObservableValue;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
@@ -37,10 +38,18 @@ public class TableViewTools {
 		col.prefWidthProperty().bind(table.widthProperty().multiply(fact));
 	}
 
-	public static <S, T> void initDragCellCol(final TableColumn<S, T> col,
+	/**
+	 * Initialises the argument column with a cell value factory and a
+	 * DragSelectCellFactory. Also sets the selection mode of the column's table to
+	 * SelectionMode.MULTIPLE. (Because without, this does not make any sense.)
+	 */
+	public static <S, T> void initDragSelectCellCol(final TableColumn<S, T> col,
 			final Function<S, ObservableValue<T>> cellValueFac, final Function<T, String> formatter) {
 		col.setCellValueFactory(cellData -> cellValueFac.apply(cellData.getValue()));
 		col.setCellFactory(new DragSelectCellFactory<>(formatter));
+
+		if (col.getTableView().getSelectionModel().getSelectionMode() != SelectionMode.MULTIPLE)
+			col.getTableView().getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 	}
 
 }
