@@ -30,30 +30,47 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 
-public class ButtonDecorator {
-	private Button button;
+public class ButtonBuilder {
 
-	public ButtonDecorator(Button button) {
+	private final Button button;
+
+	private Node graphic;
+	private EventHandler<ActionEvent> handler;
+
+	private Boolean disabled;
+
+	public ButtonBuilder(Button button) {
 		this.button = button;
 	}
 
-	public ButtonDecorator graphic(Node graphic) {
-		button.setGraphic(graphic);
+	public ButtonBuilder graphic(Node graphic) {
+		this.graphic = graphic;
 		return this;
 	}
 
-	public ButtonDecorator onAction(EventHandler<ActionEvent> handler) {
-		button.setOnAction(handler);
+	public ButtonBuilder onAction(EventHandler<ActionEvent> handler) {
+		this.handler = handler;
 		return this;
 	}
 
-	public ButtonDecorator disabled() {
-		button.setDisable(true);
+	public ButtonBuilder disabled() {
+		this.disabled = true;
 		return this;
 	}
 
-	public ButtonDecorator enabled() {
-		button.setDisable(false);
+	public ButtonBuilder enabled() {
+		this.disabled = false;
 		return this;
+	}
+
+	public Button build() {
+		if (graphic != null)
+			button.setGraphic(graphic);
+		if (handler != null)
+			button.setOnAction(handler);
+		if (disabled != null)
+			button.setDisable(disabled);
+
+		return button;
 	}
 }

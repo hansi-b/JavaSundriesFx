@@ -4,7 +4,7 @@ import javafx.scene.Scene
 import javafx.scene.control.Button
 import javafx.scene.control.Label
 
-public class ButtonDecoratorSpec extends AbstractAppSpec {
+public class ButtonBuilderSpec extends AbstractAppSpec {
 
 	Button button
 	//Label label
@@ -23,7 +23,7 @@ public class ButtonDecoratorSpec extends AbstractAppSpec {
 
 		when:
 		waitForAsyncFx(() -> {
-			new ButtonDecorator(button).graphic(label)
+			new ButtonBuilder(button).graphic(label).build()
 		})
 		then:
 		button.getGraphic() === label
@@ -32,7 +32,7 @@ public class ButtonDecoratorSpec extends AbstractAppSpec {
 	def 'button can be enabled'() {
 
 		when:
-		new ButtonDecorator(button).enabled()
+		new ButtonBuilder(button).enabled().build()
 		then:
 		!button.isDisabled()
 	}
@@ -40,7 +40,7 @@ public class ButtonDecoratorSpec extends AbstractAppSpec {
 	def 'button can be disabled'() {
 
 		when:
-		new ButtonDecorator(button).disabled()
+		new ButtonBuilder(button).disabled().build()
 		then:
 		button.isDisabled()
 	}
