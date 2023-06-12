@@ -26,11 +26,9 @@
 package org.hansib.sundries.fx.table;
 
 import java.util.Comparator;
-import java.util.Objects;
 import java.util.function.Function;
 
 import javafx.beans.value.ObservableValue;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 
 /**
@@ -42,24 +40,18 @@ public class TableColumnBuilder<S, T> {
 
 	private final TableColumn<S, T> col;
 
-	private Function<T, String> formatter;
 	private Function<S, ObservableValue<T>> valueFunc;
-
-	private boolean withDragSelection = false;
-
 	private Comparator<T> comparator;
+
+	private final CellFactoryBuilder<S, T> cellFactoryBuilder;
 
 	public TableColumnBuilder(TableColumn<S, T> col) {
 		this.col = col;
+		this.cellFactoryBuilder = new CellFactoryBuilder<>(col.getCellFactory());
 	}
 
 	public TableColumnBuilder<S, T> value(Function<S, ObservableValue<T>> valueFunc) {
 		this.valueFunc = valueFunc;
-		return this;
-	}
-
-	public TableColumnBuilder<S, T> format(Function<T, String> formatter) {
-		this.formatter = formatter;
 		return this;
 	}
 
@@ -68,51 +60,23 @@ public class TableColumnBuilder<S, T> {
 		return this;
 	}
 
-	public TableColumnBuilder<S, T> withDragSelection() {
-		this.withDragSelection = true;
+	public TableColumnBuilder<S, T> format(Function<T, String> formatter) {
+		cellFactoryBuilder.format(formatter);
 		return this;
 	}
 
-	private static class FormattingTableCell<S, T> extends TableCell<S, T> { // NOSONAR
-
-		private final Function<T, String> formatter;
-
-		private FormattingTableCell(Function<T, String> formatter, boolean withDragSelection) {
-			Objects.nonNull(formatter);
-			this.formatter = formatter;
-
-			if (withDragSelection) {
-				setOnDragDetected(e -> {
-					startFullDrag();
-					getTableColumn().getTableView().getSelectionModel().select(getIndex(), getTableColumn());
-				});
-				setOnMouseDragEntered(
-						e -> getTableColumn().getTableView().getSelectionModel().select(getIndex(), getTableColumn()));
-			}
-		}
-
-		@Override
-		/**
-		 * Compare with javafx.scene.control.TableColumn.DEFAULT_CELL_FACTORY
-		 */
-		public void updateItem(final T item, final boolean empty) {
-			super.updateItem(item, empty);
-			setText(item == null || empty ? null : formatter.apply(item));
-		}
+	public TableColumnBuilder<S, T> withDragSelection() {
+		cellFactoryBuilder.withDragSelection();
+		return this;
 	}
 
 	/**
 	 * @return the decorated column
 	 */
 	public TableColumn<S, T> build() {
+		col.setCellFactory(cellFactoryBuilder.build());
 		if (valueFunc != null)
 			col.setCellValueFactory(cellData -> valueFunc.apply(cellData.getValue()));
-		if (formatter != null)
-			/*
-			 * FIXME -> have to split out the drag selection; this should be independent of
-			 * formatting
-			 */
-			col.setCellFactory(param -> new FormattingTableCell<>(formatter, withDragSelection));
 		if (comparator != null)
 			col.setComparator(comparator);
 		return col;
