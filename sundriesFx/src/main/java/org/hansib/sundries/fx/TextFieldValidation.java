@@ -137,7 +137,7 @@ public class TextFieldValidation {
 	public TextField build(TextField textField) {
 		ValidationWrapper wrapper = new ValidationWrapper(//
 				textField != null ? textField : new TextField(), //
-				isTextValid != null ? isTextValid : this::isNullOrBlank, //
+				isTextValid != null ? isTextValid : TextFieldValidation::isNotNullOrBlank, //
 				validatedTextCallback, //
 				invalidTextCssStyleClass);
 
@@ -145,7 +145,7 @@ public class TextFieldValidation {
 		return wrapper.textField;
 	}
 
-	private boolean isNullOrBlank(String value) {
+	private static boolean isNotNullOrBlank(String value) {
 		return value != null && !value.isBlank();
 	}
 }
