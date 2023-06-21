@@ -103,9 +103,12 @@ public class EditingCell<S, T> extends TableCell<S, T> { // NOSONAR
 			if (t.getCode() == KeyCode.ESCAPE) {
 				cancelEdit();
 				t.consume();
-			} else if (t.getCode() == KeyCode.ENTER) {
-				commitEdit(stringConverter.fromString(textField.getText()));
 			}
+		});
+
+		textField.setOnAction(e -> {
+			System.out.println("set on action " + e);
+			commitEdit(stringConverter.fromString(textField.getText()));
 		});
 	}
 
