@@ -1,5 +1,6 @@
 package org.hansib.sundries.fx;
 
+import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
 
 import javafx.scene.Scene
@@ -47,6 +48,40 @@ public class TextFieldValidationSpec extends AbstractAppSpec {
 		textField.focused
 	}
 
+	def 'successful validation executes existing action handler'() {
+
+		given:
+		AtomicInteger executed = new AtomicInteger(0)
+		textField.setOnAction(e -> executed.getAndIncrement())
+		new TextFieldValidation().withValidation(s -> 'abc'.equals(s)) build(textField)
+
+		when:
+		clickOn(textField)
+		write('abc')
+		push(KeyCode.ENTER)
+
+		then:
+		textField.focused
+		executed.get() == 1
+	}
+
+	def 'failing validation does not execute existing action handler'() {
+
+		given:
+		AtomicInteger executed = new AtomicInteger(0)
+		textField.setOnAction(e -> executed.getAndIncrement())
+		new TextFieldValidation().withValidation(s -> 'abc'.equals(s)) build(textField)
+
+		when:
+		clickOn(textField)
+		write('x')
+		push(KeyCode.ENTER)
+
+		then:
+		textField.focused
+		executed.get() == 0
+	}
+
 	def 'can use custom validation'() {
 
 		given:
@@ -72,53 +107,73 @@ public class TextFieldValidationSpec extends AbstractAppSpec {
 	def 'validated callback is called when leaving field'() {
 
 		given:
-		AtomicReference<String> result = new AtomicReference("")
+		AtomicReference<String> result = new AtomicReference('')
 		new TextFieldValidation().withValidatedTextCallback(t -> result.set(t)).build(textField)
 
 		when:
 		clickOn(textField) // is empty
-		write("hello world")
+		write('hello world')
 		push(KeyCode.TAB)
 
 		then:
 		button.focused
-		result.get() == "hello world"
+		result.get() == 'hello world'
+	}
+
+	def 'validated callback is called before existing action handler'() {
+
+		given:
+		AtomicReference<String> result = new AtomicReference('')
+
+		// append to result string:
+		textField.setOnAction(e -> result.set(result.get() + 'onAction'))
+
+		new TextFieldValidation().withValidatedTextCallback(t -> result.set(result.get() + t)).build(textField)
+
+		when:
+		clickOn(textField) // is empty
+		write('-hello world-')
+		push(KeyCode.ENTER)
+
+		then:
+		textField.focused
+		result.get() == '-hello world-onAction'
 	}
 
 	def 'validated callback is not called on validation failure'() {
 
 		given:
 		AtomicReference<String> result = new AtomicReference("")
-		new TextFieldValidation().withValidation(t -> "x".compareTo(t) < 0).withValidatedTextCallback(t -> result.set(t)).build(textField)
+		new TextFieldValidation().withValidation(t -> 'x'.compareTo(t) < 0).withValidatedTextCallback(t -> result.set(t)).build(textField)
 
 		when:
 		clickOn(textField) // is empty
-		write("abc")
+		write('abc')
 		push(KeyCode.TAB)
 
 		then:
 		textField.focused
-		result.get() == ""
+		result.get() == ''
 	}
 
 	def 'custom css is applied'() {
 
 		when:
-		new TextFieldValidation().withInvalidCssStyleClass("invalid-css").build(textField)
+		new TextFieldValidation().withInvalidCssStyleClass('invalid-css').build(textField)
 
 		then:
-		textField.getStyleClass().contains("invalid-css")
+		textField.getStyleClass().contains('invalid-css')
 
 		when:
 		write("x")
 
 		then:
-		!textField.getStyleClass().contains("invalid-css")
+		!textField.getStyleClass().contains('invalid-css')
 
 		when:
 		push(KeyCode.BACK_SPACE)
 
 		then:
-		textField.getStyleClass().contains("invalid-css")
+		textField.getStyleClass().contains('invalid-css')
 	}
 }

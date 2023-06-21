@@ -29,6 +29,8 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.TextField;
 
 /**
@@ -54,10 +56,14 @@ public class TextFieldValidation {
 
 		private void init() {
 
-			textField.setOnAction(event -> validate());
+			EventHandler<ActionEvent> orgOnAction = textField.getOnAction();
+			textField.setOnAction(event -> {
+				if (checkAndHandleValidity() && orgOnAction != null)
+					orgOnAction.handle(event);
+			});
 			textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
 				if (Boolean.FALSE.equals(newValue))
-					validate();
+					checkAndHandleValidity();
 			});
 
 			if (invalidTextCssStyleClass != null) {
@@ -79,12 +85,14 @@ public class TextFieldValidation {
 				styleClass.add(invalidTextCssStyleClass);
 		}
 
-		private void validate() {
+		private boolean checkAndHandleValidity() {
 			String text = textField.getText();
-			if (!isTextValid.test(text))
+			boolean isValid = isTextValid.test(text);
+			if (!isValid)
 				textField.requestFocus();
 			else if (validatedTextCallback != null)
 				validatedTextCallback.accept(text);
+			return isValid;
 		}
 	}
 
@@ -108,6 +116,10 @@ public class TextFieldValidation {
 	}
 
 	/**
+	 * Sets a consumer for a successfully validated text input. If the text field
+	 * has an action handler set and validation succeeded on ENTER, this consumer is
+	 * called <em>before</em> the action handler is called.
+	 * 
 	 * @param validatedTextCallback called with validated text when the text field
 	 *                              focus is left
 	 */
