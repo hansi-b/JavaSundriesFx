@@ -28,7 +28,6 @@ package org.hansib.sundries.fx;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.TextField;
@@ -42,6 +41,8 @@ public class TextFieldValidation {
 
 	private static class ValidationWrapper {
 		private final TextField textField;
+		private final Styler styler;
+
 		private final Predicate<String> isTextValid;
 		private final Consumer<String> validatedTextCallback;
 		private final String invalidTextCssStyleClass;
@@ -49,6 +50,8 @@ public class TextFieldValidation {
 		private ValidationWrapper(TextField textField, Predicate<String> isTextValid,
 				Consumer<String> validatedTextCallback, String invalidTextCssStyleClass) {
 			this.textField = textField;
+			this.styler = new Styler(textField);
+
 			this.isTextValid = isTextValid;
 			this.validatedTextCallback = validatedTextCallback;
 			this.invalidTextCssStyleClass = invalidTextCssStyleClass;
@@ -78,11 +81,7 @@ public class TextFieldValidation {
 		}
 
 		private void updateCssStyle(String newValue) {
-			final ObservableList<String> styleClass = textField.getStyleClass();
-			if (isTextValid.test(newValue))
-				styleClass.removeIf(invalidTextCssStyleClass::equals);
-			else if (!styleClass.contains(invalidTextCssStyleClass))
-				styleClass.add(invalidTextCssStyleClass);
+			styler.addOrRemove(!isTextValid.test(newValue), invalidTextCssStyleClass);
 		}
 
 		private boolean checkAndHandleValidity() {

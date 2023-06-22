@@ -28,7 +28,6 @@ package org.hansib.sundries.fx;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
-import javafx.collections.ObservableList;
 import javafx.scene.control.DatePicker;
 
 public class UpdatingDatePicker {
@@ -36,9 +35,11 @@ public class UpdatingDatePicker {
 	private static class DateValidator {
 		private static final String CSS_DATE_PICKER_ERROR = "date-picker-error";
 		private final DatePicker datePicker;
+		private final Styler styler;
 
 		DateValidator(DatePicker datePicker) {
 			this.datePicker = datePicker;
+			styler = new Styler(datePicker);
 		}
 
 		/**
@@ -49,12 +50,7 @@ public class UpdatingDatePicker {
 		 */
 		LocalDate validateAndStyle() {
 			LocalDate localDate = getValidatedLocalDate();
-
-			final ObservableList<String> styleClass = datePicker.getEditor().getStyleClass();
-			if (localDate != null)
-				styleClass.remove(CSS_DATE_PICKER_ERROR);
-			else if (!styleClass.contains(CSS_DATE_PICKER_ERROR))
-				styleClass.add(CSS_DATE_PICKER_ERROR);
+			styler.addOrRemove(localDate == null, CSS_DATE_PICKER_ERROR);
 			return localDate;
 		}
 

@@ -26,8 +26,6 @@
 package org.hansib.sundries.fx;
 
 import javafx.beans.property.StringProperty;
-import javafx.collections.ObservableList;
-import javafx.css.Styleable;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
@@ -41,43 +39,28 @@ public class RenamableTab {
 	private final Tab tab;
 	private final TextField textField;
 	private final Label label;
+	private Styler styler;
 
 	public RenamableTab(final String initialLabel) {
 
 		label = new Label(initialLabel);
-
-		initLabel();
-
-		tab = new Tab();
-		tab.setGraphic(label);
-
-		tab.selectedProperty().addListener((observable, oldValue, newValue) -> {
-			if (Boolean.TRUE.equals(newValue))
-				toggleStyleClass(label, CSS_RENAMABLE_TAB_SELECTED, CSS_RENAMABLE_TAB_UNSELECTED);
-			else
-				toggleStyleClass(label, CSS_RENAMABLE_TAB_UNSELECTED, CSS_RENAMABLE_TAB_SELECTED);
-		});
-
-		textField = new TextFieldValidation() //
-				.withInvalidCssStyleClass(CSS_RENAMABLE_TAB_ERROR) //
-				.withValidatedTextCallback(this::updateText) //
-				.build();
-	}
-
-	private static void toggleStyleClass(Styleable styleable, String styleClassToAdd, String styleClassToRemove) {
-		final ObservableList<String> styleClass = styleable.getStyleClass();
-		styleClass.remove(styleClassToRemove);
-		if (!styleClass.contains(styleClassToAdd))
-			styleClass.add(styleClassToAdd);
-	}
-
-	private void initLabel() {
-		label.getStyleClass().add(CSS_RENAMABLE_TAB_UNSELECTED);
+		styler = new Styler(label).with(CSS_RENAMABLE_TAB_UNSELECTED);
 
 		label.setOnMouseClicked(event -> {
 			if (event.getClickCount() == 2)
 				editLabel();
 		});
+
+		tab = new Tab();
+		tab.setGraphic(label);
+
+		tab.selectedProperty().addListener((observable, oldValue, newValue) -> styler.ifOneElseOther(newValue,
+				CSS_RENAMABLE_TAB_SELECTED, CSS_RENAMABLE_TAB_UNSELECTED));
+
+		textField = new TextFieldValidation() //
+				.withInvalidCssStyleClass(CSS_RENAMABLE_TAB_ERROR) //
+				.withValidatedTextCallback(this::updateText) //
+				.build();
 	}
 
 	private void updateText(String text) {
