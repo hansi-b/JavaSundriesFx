@@ -33,13 +33,18 @@ import javafx.event.EventHandler;
 import javafx.scene.control.TextField;
 
 /**
- * A builder/decorator to create or augment a {@link TextField} with validating
- * behaviour. Once the text field gets focus, the text is validated while being
- * edited; while the text is invalid, focus is forced into the text field.
+ * A builder to create or augment a {@link TextField} with validating behaviour.
+ * Once the text field gets focus, the text is validated while being edited;
+ * while the text is invalid, focus is forced into the text field.
+ * 
+ * NB: The validation uses the text field's
+ * {@link TextField#setOnAction(javafx.event.EventHandler)}. If this is set
+ * after building the validation, the validation is no longer active.
  */
-public class TextFieldValidation {
+public class ValidatingTextFieldBuilder {
 
 	private static class ValidationWrapper {
+
 		private final TextField textField;
 		private final Styler styler;
 
@@ -47,8 +52,8 @@ public class TextFieldValidation {
 		private final Consumer<String> validatedTextCallback;
 		private final String invalidTextCssStyleClass;
 
-		private ValidationWrapper(TextField textField, Predicate<String> isTextValid,
-				Consumer<String> validatedTextCallback, String invalidTextCssStyleClass) {
+		private ValidationWrapper(TextField textField, Predicate<String> isTextValid, Consumer<String> validatedTextCallback,
+				String invalidTextCssStyleClass) {
 			this.textField = textField;
 			this.styler = new Styler(textField);
 
@@ -57,7 +62,7 @@ public class TextFieldValidation {
 			this.invalidTextCssStyleClass = invalidTextCssStyleClass;
 		}
 
-		private void init() {
+		private TextField initialise() {
 
 			EventHandler<ActionEvent> orgOnAction = textField.getOnAction();
 			textField.setOnAction(event -> {
@@ -78,6 +83,7 @@ public class TextFieldValidation {
 				if (textField.isFocused())
 					updateCssStyle(textField.getText());
 			}
+			return textField;
 		}
 
 		private void updateCssStyle(String newValue) {
@@ -93,7 +99,13 @@ public class TextFieldValidation {
 				validatedTextCallback.accept(text);
 			return isValid;
 		}
+
+		private static boolean isNotNullOrBlank(String value) {
+			return value != null && !value.isBlank();
+		}
 	}
+
+	private TextField textField;
 
 	private Predicate<String> isTextValid;
 
@@ -101,15 +113,19 @@ public class TextFieldValidation {
 
 	private String invalidTextCssStyleClass;
 
-	public TextFieldValidation() {
-		// no op
+	public ValidatingTextFieldBuilder() {
+		this(new TextField());
+	}
+
+	public ValidatingTextFieldBuilder(TextField textField) {
+		this.textField = textField;
 	}
 
 	/**
 	 * @param isTextValid whether the text field content is valid; defaults to
 	 *                    non-empty, non-blank text
 	 */
-	public TextFieldValidation withValidation(Predicate<String> isTextValid) {
+	public ValidatingTextFieldBuilder withValidation(Predicate<String> isTextValid) {
 		this.isTextValid = isTextValid;
 		return this;
 	}
@@ -122,7 +138,7 @@ public class TextFieldValidation {
 	 * @param validatedTextCallback called with validated text when the text field
 	 *                              focus is left
 	 */
-	public TextFieldValidation withValidatedTextCallback(Consumer<String> validatedTextCallback) {
+	public ValidatingTextFieldBuilder withValidatedTextCallback(Consumer<String> validatedTextCallback) {
 		this.validatedTextCallback = validatedTextCallback;
 		return this;
 	}
@@ -130,7 +146,7 @@ public class TextFieldValidation {
 	/**
 	 * Make the text field use the argument CSS class while its content is invalid.
 	 */
-	public TextFieldValidation withInvalidCssStyleClass(String invalidTextCssStyleClass) {
+	public ValidatingTextFieldBuilder withInvalidCssStyleClass(String invalidTextCssStyleClass) {
 		this.invalidTextCssStyleClass = invalidTextCssStyleClass;
 		return this;
 	}
@@ -139,24 +155,12 @@ public class TextFieldValidation {
 	 * @return a new text field with the validation additions
 	 */
 	public TextField build() {
-		return build(null);
-	}
-
-	/**
-	 * @return the argument text field with the validation additions
-	 */
-	public TextField build(TextField textField) {
 		ValidationWrapper wrapper = new ValidationWrapper(//
 				textField != null ? textField : new TextField(), //
-				isTextValid != null ? isTextValid : TextFieldValidation::isNotNullOrBlank, //
+				isTextValid != null ? isTextValid : ValidationWrapper::isNotNullOrBlank, //
 				validatedTextCallback, //
 				invalidTextCssStyleClass);
 
-		wrapper.init();
-		return wrapper.textField;
-	}
-
-	private static boolean isNotNullOrBlank(String value) {
-		return value != null && !value.isBlank();
+		return wrapper.initialise();
 	}
 }

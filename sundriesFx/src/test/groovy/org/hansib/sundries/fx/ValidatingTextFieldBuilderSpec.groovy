@@ -9,7 +9,7 @@ import javafx.scene.control.TextField
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.HBox
 
-public class TextFieldValidationSpec extends AbstractAppSpec {
+public class ValidatingTextFieldBuilderSpec extends AbstractAppSpec {
 
 	TextField textField
 	Button button
@@ -24,7 +24,7 @@ public class TextFieldValidationSpec extends AbstractAppSpec {
 	def 'successful validation allows focus change'() {
 
 		given:
-		new TextFieldValidation().build(textField)
+		new ValidatingTextFieldBuilder(textField).build()
 
 		when:
 		clickOn(textField)
@@ -38,7 +38,7 @@ public class TextFieldValidationSpec extends AbstractAppSpec {
 	def 'failing default validation forces back focus'() {
 
 		given:
-		new TextFieldValidation().build(textField)
+		new ValidatingTextFieldBuilder(textField).build()
 
 		when:
 		clickOn(textField) // is empty
@@ -53,7 +53,7 @@ public class TextFieldValidationSpec extends AbstractAppSpec {
 		given:
 		AtomicInteger executed = new AtomicInteger(0)
 		textField.setOnAction(e -> executed.getAndIncrement())
-		new TextFieldValidation().withValidation(s -> 'abc'.equals(s)) build(textField)
+		new ValidatingTextFieldBuilder(textField).withValidation(s -> 'abc'.equals(s)) build()
 
 		when:
 		clickOn(textField)
@@ -70,7 +70,7 @@ public class TextFieldValidationSpec extends AbstractAppSpec {
 		given:
 		AtomicInteger executed = new AtomicInteger(0)
 		textField.setOnAction(e -> executed.getAndIncrement())
-		new TextFieldValidation().withValidation(s -> 'abc'.equals(s)) build(textField)
+		new ValidatingTextFieldBuilder(textField).withValidation(s -> 'abc'.equals(s)) build()
 
 		when:
 		clickOn(textField)
@@ -85,7 +85,7 @@ public class TextFieldValidationSpec extends AbstractAppSpec {
 	def 'can use custom validation'() {
 
 		given:
-		new TextFieldValidation().withValidation(t -> "x".compareTo(t) < 0).build(textField)
+		new ValidatingTextFieldBuilder(textField).withValidation(t -> "x".compareTo(t) < 0).build()
 
 		when:
 		clickOn(textField)
@@ -108,7 +108,7 @@ public class TextFieldValidationSpec extends AbstractAppSpec {
 
 		given:
 		AtomicReference<String> result = new AtomicReference('')
-		new TextFieldValidation().withValidatedTextCallback(t -> result.set(t)).build(textField)
+		new ValidatingTextFieldBuilder(textField).withValidatedTextCallback(t -> result.set(t)).build()
 
 		when:
 		clickOn(textField) // is empty
@@ -128,7 +128,7 @@ public class TextFieldValidationSpec extends AbstractAppSpec {
 		// append to result string:
 		textField.setOnAction(e -> result.set(result.get() + 'onAction'))
 
-		new TextFieldValidation().withValidatedTextCallback(t -> result.set(result.get() + t)).build(textField)
+		new ValidatingTextFieldBuilder(textField).withValidatedTextCallback(t -> result.set(result.get() + t)).build()
 
 		when:
 		clickOn(textField) // is empty
@@ -144,7 +144,7 @@ public class TextFieldValidationSpec extends AbstractAppSpec {
 
 		given:
 		AtomicReference<String> result = new AtomicReference("")
-		new TextFieldValidation().withValidation(t -> 'x'.compareTo(t) < 0).withValidatedTextCallback(t -> result.set(t)).build(textField)
+		new ValidatingTextFieldBuilder(textField).withValidation(t -> 'x'.compareTo(t) < 0).withValidatedTextCallback(t -> result.set(t)).build()
 
 		when:
 		clickOn(textField) // is empty
@@ -159,7 +159,7 @@ public class TextFieldValidationSpec extends AbstractAppSpec {
 	def 'custom css is applied'() {
 
 		when:
-		new TextFieldValidation().withInvalidCssStyleClass('invalid-css').build(textField)
+		new ValidatingTextFieldBuilder(textField).withInvalidCssStyleClass('invalid-css').build()
 
 		then:
 		textField.getStyleClass().contains('invalid-css')

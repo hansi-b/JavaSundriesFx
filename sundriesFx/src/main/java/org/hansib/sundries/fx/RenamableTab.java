@@ -57,7 +57,7 @@ public class RenamableTab {
 		tab.selectedProperty().addListener((observable, oldValue, newValue) -> styler.ifOneElseOther(newValue,
 				CSS_RENAMABLE_TAB_SELECTED, CSS_RENAMABLE_TAB_UNSELECTED));
 
-		textField = new TextFieldValidation() //
+		textField = new ValidatingTextFieldBuilder() //
 				.withInvalidCssStyleClass(CSS_RENAMABLE_TAB_ERROR) //
 				.withValidatedTextCallback(this::updateText) //
 				.build();
