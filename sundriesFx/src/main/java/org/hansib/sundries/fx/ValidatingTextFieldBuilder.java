@@ -52,8 +52,8 @@ public class ValidatingTextFieldBuilder {
 		private final Consumer<String> validatedTextCallback;
 		private final String invalidTextCssStyleClass;
 
-		private ValidationWrapper(TextField textField, Predicate<String> isTextValid, Consumer<String> validatedTextCallback,
-				String invalidTextCssStyleClass) {
+		private ValidationWrapper(TextField textField, Predicate<String> isTextValid,
+				Consumer<String> validatedTextCallback, String invalidTextCssStyleClass) {
 			this.textField = textField;
 			this.styler = new Styler(textField);
 
@@ -107,6 +107,8 @@ public class ValidatingTextFieldBuilder {
 
 	private TextField textField;
 
+	private String initialText;
+
 	private Predicate<String> isTextValid;
 
 	private Consumer<String> validatedTextCallback;
@@ -119,6 +121,16 @@ public class ValidatingTextFieldBuilder {
 
 	public ValidatingTextFieldBuilder(TextField textField) {
 		this.textField = textField;
+	}
+
+	public ValidatingTextFieldBuilder(String initialText) {
+		this();
+		withInitialText(initialText);
+	}
+
+	public ValidatingTextFieldBuilder withInitialText(String initialText) {
+		this.initialText = initialText;
+		return this;
 	}
 
 	/**
@@ -155,8 +167,10 @@ public class ValidatingTextFieldBuilder {
 	 * @return a new text field with the validation additions
 	 */
 	public TextField build() {
-		ValidationWrapper wrapper = new ValidationWrapper(//
-				textField != null ? textField : new TextField(), //
+		TextField tf = textField != null ? textField : new TextField();
+		if (initialText != null)
+			tf.setText(initialText);
+		ValidationWrapper wrapper = new ValidationWrapper(tf, //
 				isTextValid != null ? isTextValid : ValidationWrapper::isNotNullOrBlank, //
 				validatedTextCallback, //
 				invalidTextCssStyleClass);

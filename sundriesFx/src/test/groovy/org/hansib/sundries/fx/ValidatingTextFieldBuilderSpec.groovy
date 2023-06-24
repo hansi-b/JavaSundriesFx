@@ -176,4 +176,22 @@ public class ValidatingTextFieldBuilderSpec extends AbstractAppSpec {
 		then:
 		textField.getStyleClass().contains('invalid-css')
 	}
+
+	def 'can set initial text'() {
+
+		when:
+		new ValidatingTextFieldBuilder(textField).withInitialText('abc').build()
+
+		then:
+		textField.getText() == 'abc'
+	}
+
+	def 'can set initial text via constructor'() {
+
+		when:
+		TextField tf = new ValidatingTextFieldBuilder('xyz').build()
+
+		then:
+		tf.getText() == 'xyz'
+	}
 }
