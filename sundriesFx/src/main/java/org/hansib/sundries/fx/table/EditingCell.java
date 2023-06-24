@@ -25,9 +25,12 @@
  */
 package org.hansib.sundries.fx.table;
 
-import org.hansib.sundries.fx.TextFieldValidation;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
-import javafx.beans.value.ObservableValue;
+import org.hansib.sundries.fx.ValidatingTextFieldBuilder;
+
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -89,27 +92,35 @@ public class EditingCell<S, T> extends TableCell<S, T> { // NOSONAR
 	}
 
 	private void createTextField() {
-		textField = new TextField(getString());
-		new TextFieldValidation().withInvalidCssStyleClass(CSS_VALIDATON_ERROR).build(textField);
-		textField.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
-		textField.focusedProperty()
-				.addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-					if (Boolean.FALSE.equals(newValue)) {
-						commitEdit(stringConverter.fromString(textField.getText()));
-					}
-				});
+		textField = new ValidatingTextFieldBuilder(getString()) //
+				.withValidation(t -> checkDateTime(t)) //
+				.withInvalidCssStyleClass(CSS_VALIDATON_ERROR) //
+				.withValidatedTextCallback(t -> commit()) //
+				.build();
 		textField.setOnKeyReleased(t -> {
-			System.out.println("key released " + t);
 			if (t.getCode() == KeyCode.ESCAPE) {
 				cancelEdit();
 				t.consume();
 			}
 		});
+		textField.setMinWidth(getWidth() - getGraphicTextGap() * 2);
+	}
 
-		textField.setOnAction(e -> {
-			System.out.println("set on action " + e);
-			commitEdit(stringConverter.fromString(textField.getText()));
-		});
+	private static final DateTimeFormatter dtFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+
+	private static boolean checkDateTime(String dateTimeStr) {
+		try {
+			LocalDateTime.parse(dateTimeStr, dtFormatter);
+			return true;
+		} catch (DateTimeParseException ex) {
+			return false;
+		}
+	}
+
+	private void commit() {
+		String t = textField.getText();
+		System.out.println("commit " + t);
+		commitEdit(stringConverter.fromString(t));
 	}
 
 	private String getString() {
