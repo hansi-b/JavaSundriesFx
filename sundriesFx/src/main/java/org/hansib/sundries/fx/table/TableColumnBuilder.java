@@ -40,6 +40,8 @@ public class TableColumnBuilder<S, T> {
 
 	private final TableColumn<S, T> col;
 
+	private String headerText;
+
 	private Function<S, ObservableValue<T>> valueFunc;
 	private Comparator<T> comparator;
 
@@ -48,6 +50,11 @@ public class TableColumnBuilder<S, T> {
 	public TableColumnBuilder(TableColumn<S, T> col) {
 		this.col = col;
 		this.cellFactoryBuilder = new CellFactoryBuilder<>(col.getCellFactory());
+	}
+
+	public TableColumnBuilder<S, T> headerText(String headerText) {
+		this.headerText = headerText;
+		return this;
 	}
 
 	public TableColumnBuilder<S, T> value(Function<S, ObservableValue<T>> valueFunc) {
@@ -74,6 +81,8 @@ public class TableColumnBuilder<S, T> {
 	 * @return the decorated column
 	 */
 	public TableColumn<S, T> build() {
+		if (headerText != null)
+			col.setText(headerText);
 		col.setCellFactory(cellFactoryBuilder.build());
 		if (valueFunc != null)
 			col.setCellValueFactory(cellData -> valueFunc.apply(cellData.getValue()));
