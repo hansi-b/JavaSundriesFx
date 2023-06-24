@@ -30,16 +30,16 @@ import java.time.format.DateTimeParseException;
 
 import javafx.scene.control.DatePicker;
 
-public class UpdatingDatePicker {
+public class ValidatingDatePicker {
 
 	private static class DateValidator {
 		private static final String CSS_DATE_PICKER_ERROR = "date-picker-error";
 		private final DatePicker datePicker;
 		private final Styler styler;
 
-		DateValidator(DatePicker datePicker) {
+		private DateValidator(DatePicker datePicker) {
 			this.datePicker = datePicker;
-			styler = new Styler(datePicker);
+			this.styler = new Styler(datePicker);
 		}
 
 		/**
@@ -48,7 +48,7 @@ public class UpdatingDatePicker {
 		 * 
 		 * @return a validated date; or null, if the editor content is not a valid date
 		 */
-		LocalDate validateAndStyle() {
+		private LocalDate validateAndStyle() {
 			LocalDate localDate = getValidatedLocalDate();
 			styler.addOrRemove(localDate == null, CSS_DATE_PICKER_ERROR);
 			return localDate;
