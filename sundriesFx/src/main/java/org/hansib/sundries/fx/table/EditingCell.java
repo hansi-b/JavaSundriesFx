@@ -25,9 +25,7 @@
  */
 package org.hansib.sundries.fx.table;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
+import java.util.function.Predicate;
 
 import org.hansib.sundries.fx.ValidatingTextFieldBuilder;
 
@@ -45,10 +43,15 @@ public class EditingCell<S, T> extends TableCell<S, T> { // NOSONAR
 	private static final String CSS_VALIDATON_ERROR = "validation-error";
 
 	private TextField textField;
-	private StringConverter<T> stringConverter;
 
-	public EditingCell(StringConverter<T> stringConverter) {
+	private final StringConverter<T> stringConverter;
+	private final Predicate<String> textValidator;
+
+	public EditingCell(StringConverter<T> stringConverter, Predicate<String> textValidator) {
 		this.stringConverter = stringConverter;
+		this.textValidator = textValidator;
+
+		setEditable(true);
 	}
 
 	@Override
@@ -93,7 +96,7 @@ public class EditingCell<S, T> extends TableCell<S, T> { // NOSONAR
 
 	private void createTextField() {
 		textField = new ValidatingTextFieldBuilder(getString()) //
-				.withValidation(t -> checkDateTime(t)) //
+				.withValidation(textValidator) //
 				.withInvalidCssStyleClass(CSS_VALIDATON_ERROR) //
 				.withValidatedTextCallback(t -> commit()) //
 				.build();
@@ -104,17 +107,6 @@ public class EditingCell<S, T> extends TableCell<S, T> { // NOSONAR
 			}
 		});
 		textField.setMinWidth(getWidth() - getGraphicTextGap() * 2);
-	}
-
-	private static final DateTimeFormatter dtFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-
-	private static boolean checkDateTime(String dateTimeStr) {
-		try {
-			LocalDateTime.parse(dateTimeStr, dtFormatter);
-			return true;
-		} catch (DateTimeParseException ex) {
-			return false;
-		}
 	}
 
 	private void commit() {
