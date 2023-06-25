@@ -9,7 +9,7 @@ import javafx.stage.Stage
 public class FxResourceLoaderSpec extends ApplicationSpec {
 
 	@Override
-	public void start(Stage arg0) throws Exception {
+	public void start(Stage stage) throws Exception {
 		FxToolkit.registerPrimaryStage()
 	}
 

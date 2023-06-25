@@ -9,10 +9,10 @@ import javafx.scene.control.TextField
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.HBox
 
-public class ValidatingTextFieldBuilderSpec extends AbstractAppSpec {
+public class ValidatingTextFieldBuilderSpec extends AppSpecWithScene {
 
-	TextField textField
-	Button button
+	private TextField textField
+	private Button button
 
 	@Override
 	protected Scene createScene() {

@@ -1,18 +1,20 @@
 package org.hansib.sundries.fx
 
-import javafx.scene.Scene
-import javafx.scene.control.Label
+import org.testfx.api.FxToolkit
+import org.testfx.framework.spock.ApplicationSpec
 
-public class StylerSpec extends AbstractAppSpec {
+import javafx.scene.control.Label
+import javafx.stage.Stage
+
+public class StylerSpec extends ApplicationSpec {
 
 	private Label styleable
-
 	private Styler styler
 
 	@Override
-	protected Scene createScene() {
+	public void start(Stage stage) throws Exception {
+		FxToolkit.registerPrimaryStage()
 		styleable = new Label()
-		return new Scene(styleable, 120, 40)
 	}
 
 	def 'can add styleclass'() {

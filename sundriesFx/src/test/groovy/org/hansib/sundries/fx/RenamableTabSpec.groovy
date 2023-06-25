@@ -4,7 +4,7 @@ import javafx.scene.Scene
 import javafx.scene.control.TabPane
 import javafx.scene.input.KeyCode
 
-public class RenamableTabSpec extends AbstractAppSpec {
+public class RenamableTabSpec extends AppSpecWithScene {
 
 	private TabPane tabPane
 	private RenamableTab renamableTab

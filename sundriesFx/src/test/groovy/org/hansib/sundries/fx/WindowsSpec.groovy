@@ -1,17 +1,19 @@
 package org.hansib.sundries.fx
 
+
 import javafx.scene.Scene
 import javafx.scene.control.Alert
 import javafx.scene.control.Alert.AlertType
 import javafx.scene.control.Button
+import javafx.stage.Stage
 
-public class WindowsSpec extends AbstractAppSpec {
+public class WindowsSpec extends AppSpecWithScene {
 
-	Button button
+	private Button button
 
 	@Override
 	public Scene createScene() {
-		button = new Button('click me');
+		button = new Button('click me')
 		button.setOnAction(actionEvent -> {
 			def popup = new Alert(AlertType.INFORMATION)
 			popup.setTitle('Popup')

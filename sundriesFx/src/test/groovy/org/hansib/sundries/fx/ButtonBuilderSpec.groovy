@@ -1,19 +1,20 @@
 package org.hansib.sundries.fx;
 
-import javafx.scene.Scene
+import org.testfx.api.FxToolkit
+import org.testfx.framework.spock.ApplicationSpec
+
 import javafx.scene.control.Button
 import javafx.scene.control.Label
+import javafx.stage.Stage
 
-public class ButtonBuilderSpec extends AbstractAppSpec {
+public class ButtonBuilderSpec extends ApplicationSpec {
 
-	Button button
-	//Label label
+	private Button button
 
 	@Override
-	protected Scene createScene() {
+	public void start(Stage stage) throws Exception {
+		FxToolkit.registerPrimaryStage()
 		button = new Button()
-
-		return new Scene(button, 100,40)
 	}
 
 	def 'graphic can be set'() {
@@ -22,9 +23,7 @@ public class ButtonBuilderSpec extends AbstractAppSpec {
 		Label label = new Label("label")
 
 		when:
-		waitForAsyncFx(() -> {
-			new ButtonBuilder(button).graphic(label).build()
-		})
+		new ButtonBuilder(button).graphic(label).build()
 		then:
 		button.getGraphic() === label
 	}

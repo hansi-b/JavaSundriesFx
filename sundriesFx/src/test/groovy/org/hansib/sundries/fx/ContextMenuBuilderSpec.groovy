@@ -1,13 +1,15 @@
 package org.hansib.sundries.fx;
 
-import javafx.scene.Scene
-import javafx.scene.layout.HBox
+import org.testfx.api.FxToolkit
+import org.testfx.framework.spock.ApplicationSpec
 
-public class ContextMenuBuilderSpec extends AbstractAppSpec {
+import javafx.stage.Stage
+
+public class ContextMenuBuilderSpec extends ApplicationSpec {
 
 	@Override
-	protected Scene createScene() {
-		return new Scene(new HBox())
+	public void start(Stage stage) throws Exception {
+		FxToolkit.registerPrimaryStage()
 	}
 
 	def 'can build context menu'() {
