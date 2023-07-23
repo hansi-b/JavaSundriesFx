@@ -25,7 +25,7 @@
  */
 package org.hansib.sundries.fx.table;
 
-import java.util.function.Predicate;
+import java.util.function.BiPredicate;
 
 import org.hansib.sundries.fx.ValidatingTextFieldBuilder;
 
@@ -45,11 +45,12 @@ public class EditingCell<S, T> extends TableCell<S, T> { // NOSONAR
 	private TextField textField;
 
 	private final StringConverter<T> stringConverter;
-	private final Predicate<String> textValidator;
 
-	public EditingCell(StringConverter<T> stringConverter, Predicate<String> textValidator) {
+	private BiPredicate<TableCell<S, T>, String> cellValidator;
+
+	public EditingCell(StringConverter<T> stringConverter, BiPredicate<TableCell<S, T>, String> cellValidator) {
 		this.stringConverter = stringConverter;
-		this.textValidator = textValidator;
+		this.cellValidator = cellValidator;
 
 		setEditable(true);
 	}
@@ -95,8 +96,9 @@ public class EditingCell<S, T> extends TableCell<S, T> { // NOSONAR
 	}
 
 	private void createTextField() {
+
 		textField = new ValidatingTextFieldBuilder(getString()) //
-				.withValidation(textValidator) //
+				.withValidation(text -> cellValidator.test(this, text)) //
 				.withInvalidCssStyleClass(CSS_VALIDATON_ERROR) //
 				.withValidatedTextCallback(t -> commit()) //
 				.build();
@@ -111,7 +113,6 @@ public class EditingCell<S, T> extends TableCell<S, T> { // NOSONAR
 
 	private void commit() {
 		String t = textField.getText();
-		System.out.println("commit " + t);
 		commitEdit(stringConverter.fromString(t));
 	}
 
