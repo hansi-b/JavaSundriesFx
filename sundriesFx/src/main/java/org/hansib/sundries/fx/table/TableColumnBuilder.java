@@ -29,7 +29,9 @@ import java.util.Comparator;
 import java.util.function.Function;
 
 import javafx.beans.value.ObservableValue;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.util.Callback;
 
 /**
  * A builder-like class for augmenting table columns with various functions.
@@ -45,11 +47,10 @@ public class TableColumnBuilder<S, T> {
 	private Function<S, ObservableValue<T>> valueFunc;
 	private Comparator<T> comparator;
 
-	private final CellFactoryBuilder<S, T> cellFactoryBuilder;
+	private Callback<TableColumn<S, T>, TableCell<S, T>> cellFactory;
 
 	public TableColumnBuilder(TableColumn<S, T> col) {
 		this.col = col;
-		this.cellFactoryBuilder = new CellFactoryBuilder<>(col.getCellFactory());
 	}
 
 	public TableColumnBuilder<S, T> headerText(String headerText) {
@@ -67,13 +68,8 @@ public class TableColumnBuilder<S, T> {
 		return this;
 	}
 
-	public TableColumnBuilder<S, T> format(Function<T, String> formatter) {
-		cellFactoryBuilder.format(formatter);
-		return this;
-	}
-
-	public TableColumnBuilder<S, T> withDragSelection() {
-		cellFactoryBuilder.withDragSelection();
+	public TableColumnBuilder<S, T> cellFactory(Callback<TableColumn<S, T>, TableCell<S, T>> cellFactory) {
+		this.cellFactory = cellFactory;
 		return this;
 	}
 
@@ -83,7 +79,8 @@ public class TableColumnBuilder<S, T> {
 	public TableColumn<S, T> build() {
 		if (headerText != null)
 			col.setText(headerText);
-		col.setCellFactory(cellFactoryBuilder.build());
+		if (cellFactory != null)
+			col.setCellFactory(cellFactory);
 		if (valueFunc != null)
 			col.setCellValueFactory(cellData -> valueFunc.apply(cellData.getValue()));
 		if (comparator != null)

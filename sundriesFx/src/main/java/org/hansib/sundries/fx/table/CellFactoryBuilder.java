@@ -43,6 +43,10 @@ public class CellFactoryBuilder<S, T> {
 		this.defaultCellFactory = defaultCellFactory;
 	}
 
+	public CellFactoryBuilder(TableColumn<S, T> column) {
+		this(column.getCellFactory());
+	}
+
 	public CellFactoryBuilder<S, T> format(Function<T, String> formatter) {
 		this.formatter = formatter;
 		return this;
