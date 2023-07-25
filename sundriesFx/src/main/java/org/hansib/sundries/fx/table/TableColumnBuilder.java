@@ -29,8 +29,10 @@ import java.util.Comparator;
 import java.util.function.Function;
 
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.util.Callback;
 
 /**
@@ -48,6 +50,8 @@ public class TableColumnBuilder<S, T> {
 	private Comparator<T> comparator;
 
 	private Callback<TableColumn<S, T>, TableCell<S, T>> cellFactory;
+
+	private EventHandler<CellEditEvent<S, T>> commitHandler;
 
 	public TableColumnBuilder(TableColumn<S, T> col) {
 		this.col = col;
@@ -74,6 +78,17 @@ public class TableColumnBuilder<S, T> {
 	}
 
 	/**
+	 * 
+	 * Sets the column's edit handler and additionally sets the table to editable.
+	 * 
+	 * @param commitHandler the handler to call on an edit commit
+	 */
+	public TableColumnBuilder<S, T> onEditCommit(EventHandler<CellEditEvent<S, T>> commitHandler) {
+		this.commitHandler = commitHandler;
+		return this;
+	}
+
+	/**
 	 * @return the decorated column
 	 */
 	public TableColumn<S, T> build() {
@@ -83,6 +98,10 @@ public class TableColumnBuilder<S, T> {
 			col.setCellFactory(cellFactory);
 		if (valueFunc != null)
 			col.setCellValueFactory(cellData -> valueFunc.apply(cellData.getValue()));
+		if (commitHandler != null) {
+			col.setOnEditCommit(commitHandler);
+			col.setEditable(true);
+		}
 		if (comparator != null)
 			col.setComparator(comparator);
 		return col;
