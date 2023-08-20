@@ -53,6 +53,8 @@ public class TableColumnBuilder<S, T> {
 
 	private EventHandler<CellEditEvent<S, T>> commitHandler;
 
+	private boolean editable = false;
+
 	public TableColumnBuilder(TableColumn<S, T> col) {
 		this.col = col;
 	}
@@ -88,6 +90,11 @@ public class TableColumnBuilder<S, T> {
 		return this;
 	}
 
+	public TableColumnBuilder<S, T> editable() {
+		this.editable = true;
+		return this;
+	}
+
 	/**
 	 * @return the decorated column
 	 */
@@ -102,6 +109,8 @@ public class TableColumnBuilder<S, T> {
 			col.setOnEditCommit(commitHandler);
 			col.setEditable(true);
 		}
+		if (editable)
+			col.setEditable(true);
 		if (comparator != null)
 			col.setComparator(comparator);
 		return col;
