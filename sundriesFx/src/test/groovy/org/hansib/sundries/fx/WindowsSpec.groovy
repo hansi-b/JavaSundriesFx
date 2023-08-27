@@ -5,7 +5,7 @@ import javafx.scene.Scene
 import javafx.scene.control.Alert
 import javafx.scene.control.Alert.AlertType
 import javafx.scene.control.Button
-import javafx.stage.Stage
+import spock.lang.IgnoreIf
 
 public class WindowsSpec extends AppSpecWithScene {
 
@@ -27,7 +27,9 @@ public class WindowsSpec extends AppSpecWithScene {
 		Windows.findFocusedStage() is stage
 	}
 
+	@IgnoreIf({ Boolean.valueOf(System.properties['testfx.headless']) })
 	def 'can find popup'() {
+
 		when:
 		clickOn(lookup('click me').query())
 		then:
