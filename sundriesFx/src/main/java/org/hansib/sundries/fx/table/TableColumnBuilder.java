@@ -55,6 +55,10 @@ public class TableColumnBuilder<S, T> {
 
 	private boolean editable = false;
 
+	public TableColumnBuilder(String headerText) {
+		this.col = new TableColumn<>(headerText);
+	}
+
 	public TableColumnBuilder(TableColumn<S, T> col) {
 		this.col = col;
 	}
