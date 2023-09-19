@@ -31,6 +31,7 @@ import java.util.Optional;
 
 import org.hansib.sundries.Errors;
 
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -40,14 +41,34 @@ public class AlertBuilder {
 
 	private AlertType alertType;
 	private String contentText;
+	private Node contentPane;
+
+	private String title;
+	private String headerText;
+
+	private Boolean resizable;
 
 	private Map<ButtonType, String> buttonTypes = new LinkedHashMap<>();
-
 	private ButtonType defaultButton;
 
 	public AlertBuilder(AlertType alertType, String contentText) {
 		this.alertType = alertType;
 		this.contentText = contentText;
+	}
+
+	public AlertBuilder(AlertType alertType, Node contentPane) {
+		this(alertType, "");
+		this.contentPane = contentPane;
+	}
+
+	public AlertBuilder withTitle(String title) {
+		this.title = title;
+		return this;
+	}
+
+	public AlertBuilder withHeaderText(String headerText) {
+		this.headerText = headerText;
+		return this;
 	}
 
 	public AlertBuilder withButton(ButtonType type, String text) {
@@ -68,6 +89,11 @@ public class AlertBuilder {
 		return this;
 	}
 
+	public AlertBuilder resizable(boolean resizable) {
+		this.resizable = resizable;
+		return this;
+	}
+
 	public Alert build() {
 		Alert alert = new Alert(alertType, contentText, buttonTypes.keySet().toArray(new ButtonType[0]));
 		buttonTypes.forEach((type, text) -> {
@@ -75,11 +101,30 @@ public class AlertBuilder {
 			b.setText(text);
 			b.setDefaultButton(type == defaultButton);
 		});
+
+		if (title != null)
+			alert.setTitle(title);
+		if (headerText != null)
+			alert.setHeaderText(headerText);
+
+		if (contentPane != null)
+			alert.getDialogPane().setContent(contentPane);
+
+		if (resizable != null)
+			alert.setResizable(resizable);
+
 		return alert;
 	}
 
 	/**
-	 * Builds the alert, shows and waits for a response, and returns whether the
+	 * Builds the alert, shows it, and waits for a response.
+	 */
+	public void showAndWait() {
+		build().showAndWait();
+	}
+
+	/**
+	 * Builds the alert, shows it, and waits for a response, and returns whether the
 	 * response was present and the argument result.
 	 * 
 	 * @param expectedResult the result to check for
@@ -90,5 +135,4 @@ public class AlertBuilder {
 		Optional<ButtonType> response = build().showAndWait();
 		return response.isPresent() && response.get() == expectedResult;
 	}
-
 }
