@@ -15,7 +15,7 @@ dependencies {
 testing {
 	suites {
 		test {
-			useJUnitJupiter('5.9.1')
+			useJUnitJupiter('5.10.0')
 		}
 	}
 }
@@ -23,6 +23,10 @@ testing {
 test {
 	testLogging.showStandardStreams = true
 	jvmArgs '-Dlog4j.configurationFile=log4j2_test.yaml'
+}
+
+jacoco {
+	toolVersion = "0.8.10"
 }
 
 jacocoTestReport {

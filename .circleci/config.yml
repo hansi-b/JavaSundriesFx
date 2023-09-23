@@ -13,7 +13,7 @@ workflows:
 jobs:
   build:
     docker:
-      - image: cimg/openjdk:19.0.2
+      - image: cimg/openjdk:20.0.1
 
     working_directory: ~/repo
 
@@ -28,15 +28,14 @@ jobs:
 
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "buildSrc/build.gradle" }}-{{ checksum "sundriesFx/build.gradle" }}
-            - v1-dependencies-
+            - v2-dependencies-{{ checksum "buildSrc/build.gradle" }}-{{ checksum "sundriesFx/build.gradle" }}
 
       - run: gradle dependencies
 
       - save_cache:
           paths:
             - ~/.gradle
-          key: v1-dependencies-{{ checksum "buildSrc/build.gradle" }}-{{ checksum "sundriesFx/build.gradle" }}
+          key: v2-dependencies-{{ checksum "buildSrc/build.gradle" }}-{{ checksum "sundriesFx/build.gradle" }}
 
       - run:
           gradle check jacocoTestReport -PheadlessFxMode=true --info
