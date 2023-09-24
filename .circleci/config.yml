@@ -26,16 +26,21 @@ jobs:
 
       - checkout
 
+      - run:
+          name: Generate cache key
+          command: find -type f -name "*.gradle" | sort | xargs md5sum > "/tmp/deps_checksums.txt"
+
       - restore_cache:
           keys:
-            - v2-dependencies-{{ checksum "buildSrc/build.gradle" }}-{{ checksum "sundriesFx/build.gradle" }}
+            - v01-deps-{{ checksum "/tmp/deps_checksums.txt" }}
+            - v01-deps-
 
       - run: gradle dependencies
 
       - save_cache:
+          key: v01-deps-{{ checksum "/tmp/deps_checksums.txt" }}
           paths:
-            - ~/.gradle
-          key: v2-dependencies-{{ checksum "buildSrc/build.gradle" }}-{{ checksum "sundriesFx/build.gradle" }}
+            - ~/.gradle/
 
       - run:
           gradle check jacocoTestReport -PheadlessFxMode=true --info
