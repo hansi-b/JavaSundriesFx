@@ -6,15 +6,14 @@
 
 .. image:: https://codecov.io/gh/hansi-b/javasundriesfx/branch/main/graph/badge.svg
    :target: https://codecov.io/gh/hansi-b/javasundriesfx
-    :alt: Codecov
+   :alt: Codecov
 
 Some JavaFX basics I often need in other projects.
 
 Release Log
 ----
 
-0.5xx (2023-10-10)
+0.5.0 (2023-10-10)
 ____
 
-* dubidu
-
+* added various builders
