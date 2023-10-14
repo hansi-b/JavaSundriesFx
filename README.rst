@@ -1,8 +1,9 @@
-# JavaSundriesFx
+JavaSundriesFx
+====
 
-.. image:: https://circleci.com/gh/hansi-b/JavaSundriesFx.svg?style=svg
-    :target: https://circleci.com/gh/hansi-b/JavaSundriesFx
-    :alt: CircleCI
+.. image:: https://github.com/hansi-b/JavaSundriesFx/actions/workflows/gradle.yml/badge.svg
+    :target: https://github.com/hansi-b/JavaSundriesFx/actions/workflows/gradle.yml
+    :alt: Github Workflow
 
 .. image:: https://codecov.io/gh/hansi-b/javasundriesfx/branch/main/graph/badge.svg
    :target: https://codecov.io/gh/hansi-b/javasundriesfx
@@ -17,3 +18,4 @@ Release Log
 ____
 
 * added various builders
+
