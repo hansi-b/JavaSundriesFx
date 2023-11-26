@@ -26,7 +26,6 @@
 package org.hansib.sundries.fx;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -47,13 +46,11 @@ public class FxResourceLoader {
 
 	FxResourceLoader(String fxmlSourceStringFormat, ResourceLoader resourceLoader) {
 
-		Objects.requireNonNull(resourceLoader);
 		if (!fxmlSourceStringFormat.contains("%s"))
 			throw Errors.illegalArg("Argument fxmlSourceStringFormat '%s' does not contain String placeholder %%s",
 					fxmlSourceStringFormat);
-
 		this.fxmlResourcePattern = fxmlSourceStringFormat;
-		this.resourceLoader = resourceLoader;
+		this.resourceLoader = Objects.requireNonNull(resourceLoader);
 	}
 
 	/**
@@ -103,8 +100,7 @@ public class FxResourceLoader {
 	 * 
 	 */
 	public <C, P> C loadFxmlAndGetController(String fxmlName, Consumer<P> loadConsumer) {
-		Objects.requireNonNull(loadConsumer);
-		return loadAndGetControllerInternal(fxmlName, loadConsumer);
+		return loadAndGetControllerInternal(fxmlName, Objects.requireNonNull(loadConsumer));
 	}
 
 	private <C, P> C loadAndGetControllerInternal(String fxmlName, Consumer<P> loadConsumer) {
@@ -125,8 +121,6 @@ public class FxResourceLoader {
 	}
 
 	public Image loadImage(String imageName) {
-
-		final InputStream stream = resourceLoader.getResourceStream(imageName);
-		return stream == null ? null : new Image(stream);
+		return new Image(resourceLoader.getResourceStream(imageName));
 	}
 }
