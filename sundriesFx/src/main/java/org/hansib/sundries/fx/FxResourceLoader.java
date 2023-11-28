@@ -36,7 +36,6 @@ import org.hansib.sundries.ResourceLoader;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class FxResourceLoader {
@@ -69,6 +68,10 @@ public class FxResourceLoader {
 	 */
 	public FxResourceLoader(String fxmlSourceStringFormat) {
 		this(fxmlSourceStringFormat, new ResourceLoader());
+	}
+
+	public ResourceLoader resourceLoader() {
+		return resourceLoader;
 	}
 
 	public <C> C loadFxmlToStage(String fxmlName, Stage stage) {
@@ -104,7 +107,8 @@ public class FxResourceLoader {
 	}
 
 	private <C, P> C loadAndGetControllerInternal(String fxmlName, Consumer<P> loadConsumer) {
-		FXMLLoader fxmlLoader = getFxmlLoader(fxmlName);
+		FXMLLoader fxmlLoader = new FXMLLoader(
+				resourceLoader.getResourceUrl(String.format(fxmlResourcePattern, fxmlName)));
 		P load;
 		try {
 			load = fxmlLoader.load();
@@ -114,13 +118,5 @@ public class FxResourceLoader {
 		if (loadConsumer != null)
 			loadConsumer.accept(load);
 		return fxmlLoader.getController();
-	}
-
-	private FXMLLoader getFxmlLoader(String fxmlName) {
-		return new FXMLLoader(resourceLoader.getResourceUrl(String.format(fxmlResourcePattern, fxmlName)));
-	}
-
-	public Image loadImage(String imageName) {
-		return new Image(resourceLoader.getResourceStream(imageName));
 	}
 }
