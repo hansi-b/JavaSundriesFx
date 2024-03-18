@@ -72,6 +72,16 @@ public class Styler {
 		return styleable.getStyleClass().removeIf(styleClass::equals);
 	}
 
+	/**
+	 * Removes all instances of the argument styles.
+	 * 
+	 * @param styleClasses the style class names to remove
+	 * @return true if any of the argument classes was removed
+	 */
+	public boolean removeAll(String... styleClasses) {
+		return styleable.getStyleClass().removeAll(styleClasses);
+	}
+
 	public boolean contains(String styleClass) {
 		return styleable.getStyleClass().contains(styleClass);
 	}

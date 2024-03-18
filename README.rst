@@ -14,6 +14,11 @@ Some JavaFX basics I often need in other projects.
 Release Log
 ----
 
+0.5.2 (2024-03-18)
+~~~~
+
+* added convenience method
+
 0.5.1 (2024-02-10)
 ~~~~
 
