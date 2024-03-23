@@ -27,9 +27,11 @@ package org.hansib.sundries.fx;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.hansib.sundries.Errors;
 
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
@@ -48,8 +50,20 @@ public class ContextMenuBuilder {
 	}
 
 	public ContextMenuBuilder item(String label, EventHandler<ActionEvent> eventHandler) {
+		return itemInternal(label, eventHandler, null);
+	}
+
+	public ContextMenuBuilder item(String label, EventHandler<ActionEvent> eventHandler,
+			ObservableValue<Boolean> disableOn) {
+		return itemInternal(label, eventHandler, Objects.requireNonNull(disableOn));
+	}
+
+	private ContextMenuBuilder itemInternal(String label, EventHandler<ActionEvent> eventHandler,
+			ObservableValue<Boolean> disableOn) {
 		final MenuItem item = new MenuItem(label);
 		item.setOnAction(eventHandler);
+		if (disableOn != null)
+			item.disableProperty().bind(disableOn);
 		items.add(item);
 		return this;
 	}
