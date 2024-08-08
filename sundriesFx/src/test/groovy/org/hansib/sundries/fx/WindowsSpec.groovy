@@ -3,9 +3,8 @@ package org.hansib.sundries.fx
 
 import javafx.scene.Scene
 import javafx.scene.control.Alert
-import javafx.scene.control.Alert.AlertType
 import javafx.scene.control.Button
-import spock.lang.IgnoreIf
+import javafx.scene.control.Alert.AlertType
 
 public class WindowsSpec extends AppSpecWithScene {
 
@@ -27,7 +26,6 @@ public class WindowsSpec extends AppSpecWithScene {
 		Windows.findFocusedStage() is stage
 	}
 
-	@IgnoreIf({ Boolean.valueOf(System.properties['testfx.headless']) })
 	def 'can find popup'() {
 
 		when:
