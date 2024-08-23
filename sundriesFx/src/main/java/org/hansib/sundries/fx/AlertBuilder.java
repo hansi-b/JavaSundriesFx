@@ -118,9 +118,11 @@ public class AlertBuilder {
 
 	/**
 	 * Builds the alert, shows it, and waits for a response.
+	 * 
+	 * @return the result of {@link Alert#showAndWait()}
 	 */
-	public void showAndWait() {
-		build().showAndWait();
+	public Optional<ButtonType> showAndWait() {
+		return build().showAndWait();
 	}
 
 	/**
@@ -132,7 +134,7 @@ public class AlertBuilder {
 	 *         expected result
 	 */
 	public boolean showAndWaitFor(ButtonType expectedResult) {
-		Optional<ButtonType> response = build().showAndWait();
+		Optional<ButtonType> response = showAndWait();
 		return response.isPresent() && response.get() == expectedResult;
 	}
 }
