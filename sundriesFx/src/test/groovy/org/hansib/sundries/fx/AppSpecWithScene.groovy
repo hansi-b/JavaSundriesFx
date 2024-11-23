@@ -31,6 +31,8 @@ abstract public class AppSpecWithScene extends ApplicationSpec {
 		WaitForAsyncUtils.waitForAsyncFx(1_000, runnable)
 	}
 
+	static boolean isHeadless() { Boolean.getBoolean('testfx.headless') }
+
 	@Override
 	void stop() throws Exception {
 		FxToolkit.cleanupStages()

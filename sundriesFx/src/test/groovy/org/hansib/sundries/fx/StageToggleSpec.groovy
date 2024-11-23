@@ -29,8 +29,8 @@ public class StageToggleSpec extends AppSpecWithScene {
 		return new Scene(pane, 120, 40)
 	}
 
-	@IgnoreIf({ Boolean.valueOf(System.properties['testfx.headless']) })
-	def'toggle can show and hide stage'() {
+	@IgnoreIf({ isHeadless() })
+	def 'toggle can show and hide stage'() {
 
 		when:
 		clickOn(button)
