@@ -1,4 +1,4 @@
-/**
+/*-
  * MIT License
  *
  * SundriesFx - https://github.com/hansi-b/JavaSundriesFx
