@@ -1,4 +1,4 @@
-/*-
+/**
  * MIT License
  *
  * SundriesFx - https://github.com/hansi-b/JavaSundriesFx
@@ -26,30 +26,38 @@
 package org.hansib.sundries.fx;
 
 import java.util.Objects;
-import java.util.function.Supplier;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.stage.Stage;
 
-public class StageToggle {
+public class StageDecorator {
 
-	private final Supplier<Stage> stageInit;
-	private Stage stage;
+	private final Stage stage;
 
-	public StageToggle(Supplier<Stage> stageInit) {
-		this.stageInit = Objects.requireNonNull(stageInit);
+	public StageDecorator(Stage stage) {
+		this.stage = Objects.requireNonNull(stage);
 	}
 
 	/**
-	 * Initialises stage on first call, toggles visibility afterwards.
+	 * Makes this decorator's stage resize to its previous size when reopened.
 	 */
-	public void toggle() {
-		if (stage == null) {
-			stage = stageInit.get();
-			new StageDecorator(stage).addSizeRestore();
-		}
+	public void addSizeRestore() {
+		stage.setOnShown(composeHandlers(e -> {
+			stage.setX(stage.getX());
+			stage.setY(stage.getY());
+			stage.setWidth(stage.getWidth());
+			stage.setHeight(stage.getHeight());
+		}, stage.getOnShown()));
+	}
 
-		if (stage.isShowing())
-			stage.hide();
-		else
-			stage.show();
+	private static <E extends Event> EventHandler<E> composeHandlers(EventHandler<E> first, EventHandler<E> second) {
+		if (first == null)
+			return second;
+		if (second == null)
+			return first;
+		return event -> {
+			first.handle(event);
+			second.handle(event);
+		};
 	}
 }

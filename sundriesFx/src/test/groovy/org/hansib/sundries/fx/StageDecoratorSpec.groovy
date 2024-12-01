@@ -6,7 +6,7 @@ import javafx.scene.layout.StackPane
 import javafx.stage.Stage
 import spock.lang.IgnoreIf
 
-public class StageToggleSpec extends AppSpecWithScene {
+class StageToggleSpec extends AppSpecWithScene {
 
 	private Button button
 
