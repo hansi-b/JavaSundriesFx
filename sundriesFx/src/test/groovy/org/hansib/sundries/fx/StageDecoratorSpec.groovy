@@ -6,17 +6,17 @@ import javafx.scene.layout.StackPane
 import javafx.stage.Stage
 import spock.lang.IgnoreIf
 
-public class StageToggleSpec extends AppSpecWithScene {
+class StageDecoratorSpec extends AppSpecWithScene {
 
 	private Button button
 
 	private Stage stage
 
-	private StageToggle toggle
+	private StageDecorator toggle
 
 	@Override
 	protected Scene createScene() {
-		toggle = new StageToggle(() -> {
+		toggle = new StageDecorator(() -> {
 			stage = new Stage()
 		})
 		button = new Button('toggle')

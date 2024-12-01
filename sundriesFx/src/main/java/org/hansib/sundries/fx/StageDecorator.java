@@ -31,12 +31,12 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.stage.Stage;
 
-public class StageToggle {
+public class StageDecorator {
 
 	private final Supplier<Stage> stageInit;
 	private Stage stage;
 
-	public StageToggle(Supplier<Stage> stageInit) {
+	public StageDecorator(Supplier<Stage> stageInit) {
 		this.stageInit = stageInit;
 	}
 
