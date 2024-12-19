@@ -1,13 +1,13 @@
 package org.hansib.sundries.fx
 
+import javafx.scene.Scene
+import javafx.stage.Stage
+
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.testfx.api.FxToolkit
 import org.testfx.framework.spock.ApplicationSpec
 import org.testfx.util.WaitForAsyncUtils
-
-import javafx.scene.Scene
-import javafx.stage.Stage
 
 abstract public class AppSpecWithScene extends ApplicationSpec {
 

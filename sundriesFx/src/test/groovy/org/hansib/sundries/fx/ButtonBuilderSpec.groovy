@@ -1,11 +1,11 @@
-package org.hansib.sundries.fx;
-
-import org.testfx.api.FxToolkit
-import org.testfx.framework.spock.ApplicationSpec
+package org.hansib.sundries.fx
 
 import javafx.scene.control.Button
 import javafx.scene.control.Label
 import javafx.stage.Stage
+
+import org.testfx.api.FxToolkit
+import org.testfx.framework.spock.ApplicationSpec
 
 public class ButtonBuilderSpec extends ApplicationSpec {
 

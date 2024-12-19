@@ -4,14 +4,14 @@ import static javafx.collections.FXCollections.observableArrayList
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.testfx.matcher.control.TableViewMatchers.hasTableCell
 
-import org.hansib.sundries.fx.AppSpecWithScene
-
 import javafx.scene.Scene
 import javafx.scene.control.TableColumn
 import javafx.scene.control.TableView
 import javafx.scene.control.cell.MapValueFactory
 import javafx.scene.input.KeyCode
 import javafx.util.converter.DefaultStringConverter
+
+import org.hansib.sundries.fx.AppSpecWithScene
 
 public class EditingCellSpec extends AppSpecWithScene {
 
@@ -33,7 +33,7 @@ public class EditingCellSpec extends AppSpecWithScene {
 		tableView.getColumns().setAll(nameCol)
 
 		nameCol.setCellValueFactory(new MapValueFactory<>('name'))
-		nameCol.setCellFactory(e -> new EditingCell(stringConverter, (c, s) -> s!= null && !s.isEmpty()))
+		nameCol.setCellFactory(e -> new EditingCell(stringConverter, (c, s) -> s != null && !s.isEmpty()))
 		nameCol.prefWidthProperty().bind(tableView.widthProperty().multiply(.95))
 		nameCol.setEditable(true)
 

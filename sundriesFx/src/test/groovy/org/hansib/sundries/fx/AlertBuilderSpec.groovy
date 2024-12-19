@@ -1,13 +1,12 @@
-
 package org.hansib.sundries.fx
-
-import org.testfx.api.FxToolkit
-import org.testfx.framework.spock.ApplicationSpec
 
 import javafx.scene.control.Alert
 import javafx.scene.control.Alert.AlertType
 import javafx.scene.control.ButtonType
 import javafx.stage.Stage
+
+import org.testfx.api.FxToolkit
+import org.testfx.framework.spock.ApplicationSpec
 
 public class AlertBuilderSpec extends ApplicationSpec {
 

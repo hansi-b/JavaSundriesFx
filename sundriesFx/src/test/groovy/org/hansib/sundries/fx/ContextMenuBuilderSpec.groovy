@@ -1,9 +1,9 @@
-package org.hansib.sundries.fx;
+package org.hansib.sundries.fx
+
+import javafx.stage.Stage
 
 import org.testfx.api.FxToolkit
 import org.testfx.framework.spock.ApplicationSpec
-
-import javafx.stage.Stage
 
 public class ContextMenuBuilderSpec extends ApplicationSpec {
 

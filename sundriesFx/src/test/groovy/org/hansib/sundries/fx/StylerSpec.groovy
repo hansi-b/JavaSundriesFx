@@ -1,10 +1,10 @@
 package org.hansib.sundries.fx
 
-import org.testfx.api.FxToolkit
-import org.testfx.framework.spock.ApplicationSpec
-
 import javafx.scene.control.Label
 import javafx.stage.Stage
+
+import org.testfx.api.FxToolkit
+import org.testfx.framework.spock.ApplicationSpec
 
 public class StylerSpec extends ApplicationSpec {
 

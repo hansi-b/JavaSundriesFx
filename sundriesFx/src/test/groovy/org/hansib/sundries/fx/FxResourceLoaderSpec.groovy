@@ -1,10 +1,10 @@
-package org.hansib.sundries.fx;
-
-import org.testfx.api.FxToolkit
-import org.testfx.framework.spock.ApplicationSpec
+package org.hansib.sundries.fx
 
 import javafx.scene.control.TableView
 import javafx.stage.Stage
+
+import org.testfx.api.FxToolkit
+import org.testfx.framework.spock.ApplicationSpec
 
 public class FxResourceLoaderSpec extends ApplicationSpec {
 
@@ -13,7 +13,7 @@ public class FxResourceLoaderSpec extends ApplicationSpec {
 		FxToolkit.registerPrimaryStage()
 	}
 
-	def 'can load controller'(){
+	def 'can load controller'() {
 
 		when:
 		LoadTestController controller = new FxResourceLoader().loadFxmlAndGetController('loadTestController.fxml')
@@ -21,7 +21,7 @@ public class FxResourceLoaderSpec extends ApplicationSpec {
 		controller.testTable.getItems().isEmpty()
 	}
 
-	def 'can load controller with callback'(){
+	def 'can load controller with callback'() {
 
 		given:
 		def loaded = []
@@ -35,7 +35,7 @@ public class FxResourceLoaderSpec extends ApplicationSpec {
 		controller.testTable.getItems().isEmpty()
 	}
 
-	def 'IOException during loading is mapped to IllegalState'(){
+	def 'IOException during loading is mapped to IllegalState'() {
 
 		when:
 		LoadTestController controller = new FxResourceLoader().loadFxmlAndGetController('faultyStuff.fxml')
