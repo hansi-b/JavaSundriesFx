@@ -27,12 +27,12 @@ package org.hansib.sundries.fx.table;
 
 import java.util.function.BiPredicate;
 
-import org.hansib.sundries.fx.ValidatingTextFieldBuilder;
-
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.util.StringConverter;
+
+import org.hansib.sundries.fx.ValidatingTextFieldBuilder;
 
 /**
  * Adapted from

@@ -27,6 +27,7 @@ package org.hansib.sundries.fx;
 
 import java.util.Objects;
 import java.util.function.Supplier;
+
 import javafx.stage.Stage;
 
 public class StageToggle {

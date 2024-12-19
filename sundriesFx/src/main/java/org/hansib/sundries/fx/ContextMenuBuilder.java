@@ -29,13 +29,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import org.hansib.sundries.Errors;
-
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+
+import org.hansib.sundries.Errors;
 
 /**
  * A simple builder for {@link ContextMenu}. Mainly syntactic sugar for slightly

@@ -26,6 +26,7 @@
 package org.hansib.sundries.fx;
 
 import java.util.Objects;
+
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.stage.Stage;
