@@ -29,13 +29,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import org.hansib.sundries.Errors;
-
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+
+import org.hansib.sundries.Errors;
 
 public class AlertBuilder {
 

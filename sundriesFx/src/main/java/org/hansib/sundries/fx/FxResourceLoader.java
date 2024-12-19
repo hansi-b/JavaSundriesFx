@@ -30,13 +30,13 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import org.hansib.sundries.Errors;
-import org.hansib.sundries.ResourceLoader;
-
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+
+import org.hansib.sundries.Errors;
+import org.hansib.sundries.ResourceLoader;
 
 public class FxResourceLoader {
 

@@ -27,8 +27,6 @@ package org.hansib.sundries.fx.table;
 
 import java.util.stream.Collectors;
 
-import org.hansib.sundries.fx.ContextMenuBuilder;
-
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableView;
 import javafx.scene.input.Clipboard;
@@ -36,6 +34,8 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+
+import org.hansib.sundries.fx.ContextMenuBuilder;
 
 public class CsvCopyTableEnabler {
 	private static final KeyCodeCombination defaultCopyControlKey = new KeyCodeCombination(KeyCode.C,
