@@ -33,20 +33,33 @@ import javafx.stage.Stage;
 public class StageToggle {
 
 	private final Supplier<Stage> stageInit;
+
 	private Stage stage;
 
 	public StageToggle(Supplier<Stage> stageInit) {
+		this(stageInit, null);
+	}
+
+	public StageToggle(Supplier<Stage> stageInit, StageData initialStageData) {
 		this.stageInit = Objects.requireNonNull(stageInit);
+		if (initialStageData != null) {
+			initStage();
+			initialStageData.apply(stage);
+		}
+	}
+
+	private void initStage() {
+		if (stage == null) {
+			stage = stageInit.get();
+			new StageDecorator(stage).addSizeRestore();
+		}
 	}
 
 	/**
 	 * Initialises stage on first call, toggles visibility afterwards.
 	 */
 	public void toggle() {
-		if (stage == null) {
-			stage = stageInit.get();
-			new StageDecorator(stage).addSizeRestore();
-		}
+		initStage();
 
 		if (stage.isShowing())
 			stage.hide();
