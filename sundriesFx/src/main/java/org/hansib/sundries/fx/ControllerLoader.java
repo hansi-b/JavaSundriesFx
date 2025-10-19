@@ -28,7 +28,6 @@ package org.hansib.sundries.fx;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 import javafx.fxml.FXMLLoader;
@@ -71,16 +70,15 @@ public class ControllerLoader<C> {
 		this(fxmlSourceStringFormat, new ResourceLoader());
 	}
 
-	public C loadFxmlToStage(String fxmlName, Supplier<C> controllerFactory, Stage stage) {
-		return loadFxmlAndGetController(fxmlName, controllerFactory, (Parent p) -> stage.setScene(new Scene(p)));
-	}
-
 	public C loadFxmlToStage(String fxmlName, Stage stage) {
-		return loadFxmlAndGetController(fxmlName, (Parent p) -> stage.setScene(new Scene(p)));
+		return loadFxmlToStage(fxmlName, null, stage);
 	}
 
-	public C loadFxmlToStage(String fxmlName, Stage stage, Function<Parent, Scene> sceneGetter) {
-		return loadFxmlAndGetController(fxmlName, (Parent p) -> stage.setScene(sceneGetter.apply(p)));
+	/**
+	 * @param controllerFactory the supplier called to create the controller (instead of its default constructor)
+	 */
+	public C loadFxmlToStage(String fxmlName, Supplier<C> controllerFactory, Stage stage) {
+		return loadInternal(fxmlName, controllerFactory, (Parent p) -> stage.setScene(new Scene(p)));
 	}
 
 	/**
@@ -90,25 +88,6 @@ public class ControllerLoader<C> {
 	 */
 	public C loadFxmlAndGetController(String fxmlName) {
 		return loadInternal(fxmlName, null, null);
-	}
-
-	/**
-	 * @param controllerFactory the supplier called to create the controller (instead of its default constructor)
-	 */
-	public <P> C loadFxmlAndGetController(String fxmlName, Supplier<C> controllerFactory, Consumer<P> loadConsumer) {
-		return loadInternal(fxmlName, controllerFactory, Objects.requireNonNull(loadConsumer));
-	}
-
-	/**
-	 * Loads the argument FXML file, passes the contents to the argument consumer, and returns the controller.
-	 *
-	 * @param loadConsumer the consumer for the result of type P of loading the FXML
-	 * @throws IllegalStateException thrown as a wrapper if an IOException is thrown on loading the fxml content
-	 * @throws NullPointerException  on a null loadConsumer
-	 *
-	 */
-	public <P> C loadFxmlAndGetController(String fxmlName, Consumer<P> loadConsumer) {
-		return loadInternal(fxmlName, null, Objects.requireNonNull(loadConsumer));
 	}
 
 	private <P> C loadInternal(String filename, Supplier<C> controllerFactory, Consumer<P> loadConsumer) {
