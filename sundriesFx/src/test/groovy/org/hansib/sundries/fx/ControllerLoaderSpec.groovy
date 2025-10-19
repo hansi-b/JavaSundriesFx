@@ -6,7 +6,7 @@ import javafx.stage.Stage
 import org.testfx.api.FxToolkit
 import org.testfx.framework.spock.ApplicationSpec
 
-public class FxResourceLoaderSpec extends ApplicationSpec {
+public class ControllerLoaderSpec extends ApplicationSpec {
 
 	@Override
 	public void start(Stage stage) throws Exception {
@@ -16,7 +16,7 @@ public class FxResourceLoaderSpec extends ApplicationSpec {
 	def 'can load controller'() {
 
 		when:
-		LoadTestController controller = new FxResourceLoader().loadFxmlAndGetController('loadTestController.fxml')
+		LoadTestController controller = new ControllerLoader<>().loadFxmlAndGetController('loadTestController.fxml')
 		then:
 		controller.testTable.getItems().isEmpty()
 	}
@@ -27,7 +27,7 @@ public class FxResourceLoaderSpec extends ApplicationSpec {
 		def loaded = []
 
 		when:
-		LoadTestController controller = new FxResourceLoader().loadFxmlAndGetController('loadTestController.fxml', p -> loaded.add(p))
+		LoadTestController controller = new ControllerLoader<>().loadFxmlAndGetController('loadTestController.fxml', p -> loaded.add(p))
 
 		then:
 		loaded.size() == 1
@@ -38,7 +38,7 @@ public class FxResourceLoaderSpec extends ApplicationSpec {
 	def 'IOException during loading is mapped to IllegalState'() {
 
 		when:
-		LoadTestController controller = new FxResourceLoader().loadFxmlAndGetController('faultyStuff.fxml')
+		new ControllerLoader<>().loadFxmlAndGetController('faultyStuff.fxml')
 		then:
 		def ex = thrown IllegalStateException
 		ex.message == "Encountered exception loading 'faultyStuff.fxml'"

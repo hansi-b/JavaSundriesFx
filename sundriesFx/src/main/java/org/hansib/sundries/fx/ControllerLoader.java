@@ -39,12 +39,15 @@ import javafx.stage.Stage;
 import org.hansib.sundries.Errors;
 import org.hansib.sundries.ResourceLoader;
 
-public class FxResourceLoader {
+/**
+ * Builder wrapper around loading controllers.
+ */
+public class ControllerLoader<C> {
 
 	private final String fxmlResourcePattern;
 	private final ResourceLoader resourceLoader;
 
-	FxResourceLoader(String fxmlSourceStringFormat, ResourceLoader resourceLoader) {
+	ControllerLoader(String fxmlSourceStringFormat, ResourceLoader resourceLoader) {
 
 		if (!fxmlSourceStringFormat.contains("%s"))
 			throw Errors.illegalArg("Argument fxmlSourceStringFormat '%s' does not contain String placeholder %%s",
@@ -56,31 +59,27 @@ public class FxResourceLoader {
 	/**
 	 * Instantiates a new loader with the default fxmlSourceStringFormat of "fxml/%s"
 	 */
-	public FxResourceLoader() {
+	public ControllerLoader() {
 		this("fxml/%s");
 	}
 
 	/**
 	 * @param fxmlSourceStringFormat a String format pattern used to resolve argument fxml Names passed to this
-	 *                               {@link FxResourceLoader}; must have one %s String placeholder
+	 *                               {@link ControllerLoader}; must have one %s String placeholder
 	 */
-	public FxResourceLoader(String fxmlSourceStringFormat) {
+	public ControllerLoader(String fxmlSourceStringFormat) {
 		this(fxmlSourceStringFormat, new ResourceLoader());
 	}
 
-	public ResourceLoader resourceLoader() {
-		return resourceLoader;
-	}
-
-	public <C> C loadFxmlToStage(String fxmlName, Supplier<C> controllerFactory, Stage stage) {
+	public C loadFxmlToStage(String fxmlName, Supplier<C> controllerFactory, Stage stage) {
 		return loadFxmlAndGetController(fxmlName, controllerFactory, (Parent p) -> stage.setScene(new Scene(p)));
 	}
 
-	public <C> C loadFxmlToStage(String fxmlName, Stage stage) {
+	public C loadFxmlToStage(String fxmlName, Stage stage) {
 		return loadFxmlAndGetController(fxmlName, (Parent p) -> stage.setScene(new Scene(p)));
 	}
 
-	public <C> C loadFxmlToStage(String fxmlName, Stage stage, Function<Parent, Scene> sceneGetter) {
+	public C loadFxmlToStage(String fxmlName, Stage stage, Function<Parent, Scene> sceneGetter) {
 		return loadFxmlAndGetController(fxmlName, (Parent p) -> stage.setScene(sceneGetter.apply(p)));
 	}
 
@@ -89,15 +88,15 @@ public class FxResourceLoader {
 	 *
 	 * @throws IllegalStateException thrown as a wrapper if an IOException is thrown on loading the fxml content
 	 */
-	public <C> C loadFxmlAndGetController(String fxmlName) {
-		return loadAndGetControllerInternal(fxmlName, null, null);
+	public C loadFxmlAndGetController(String fxmlName) {
+		return loadInternal(fxmlName, null, null);
 	}
 
 	/**
 	 * @param controllerFactory the supplier called to create the controller (instead of its default constructor)
 	 */
-	public <C, P> C loadFxmlAndGetController(String fxmlName, Supplier<C> controllerFactory, Consumer<P> loadConsumer) {
-		return loadAndGetControllerInternal(fxmlName, controllerFactory, Objects.requireNonNull(loadConsumer));
+	public <P> C loadFxmlAndGetController(String fxmlName, Supplier<C> controllerFactory, Consumer<P> loadConsumer) {
+		return loadInternal(fxmlName, controllerFactory, Objects.requireNonNull(loadConsumer));
 	}
 
 	/**
@@ -108,21 +107,20 @@ public class FxResourceLoader {
 	 * @throws NullPointerException  on a null loadConsumer
 	 *
 	 */
-	public <C, P> C loadFxmlAndGetController(String fxmlName, Consumer<P> loadConsumer) {
-		return loadAndGetControllerInternal(fxmlName, null, Objects.requireNonNull(loadConsumer));
+	public <P> C loadFxmlAndGetController(String fxmlName, Consumer<P> loadConsumer) {
+		return loadInternal(fxmlName, null, Objects.requireNonNull(loadConsumer));
 	}
 
-	private <C, P> C loadAndGetControllerInternal(String fxmlName, Supplier<C> controllerFactory,
-		Consumer<P> loadConsumer) {
+	private <P> C loadInternal(String filename, Supplier<C> controllerFactory, Consumer<P> loadConsumer) {
 		FXMLLoader fxmlLoader = new FXMLLoader(
-			resourceLoader.getResourceUrl(String.format(fxmlResourcePattern, fxmlName)));
+			resourceLoader.getResourceUrl(String.format(fxmlResourcePattern, filename)));
 		if (controllerFactory != null)
 			fxmlLoader.setControllerFactory(c -> controllerFactory.get());
 		P load;
 		try {
 			load = fxmlLoader.load();
 		} catch (IOException e) {
-			throw Errors.illegalState(e, "Encountered exception loading '%s'", fxmlName);
+			throw Errors.illegalState(e, "Encountered exception loading '%s'", filename);
 		}
 		if (loadConsumer != null)
 			loadConsumer.accept(load);
