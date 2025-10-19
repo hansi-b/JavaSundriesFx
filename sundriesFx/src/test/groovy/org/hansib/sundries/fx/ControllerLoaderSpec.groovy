@@ -6,10 +6,10 @@ import javafx.stage.Stage
 import org.testfx.api.FxToolkit
 import org.testfx.framework.spock.ApplicationSpec
 
-public class ControllerLoaderSpec extends ApplicationSpec {
+class ControllerLoaderSpec extends ApplicationSpec {
 
 	@Override
-	public void start(Stage stage) throws Exception {
+	void start(Stage stage) throws Exception {
 		FxToolkit.registerPrimaryStage()
 	}
 
