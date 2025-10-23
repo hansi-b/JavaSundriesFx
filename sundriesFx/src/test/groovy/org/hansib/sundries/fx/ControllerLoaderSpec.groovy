@@ -17,8 +17,8 @@ class ControllerLoaderSpec extends ApplicationSpec {
 	def 'can load controller'() {
 
 		when:
-		LoadTestController controller = new ControllerLoader<LoadTestController>()
-			.loadFxmlAndGetController('loadTestController.fxml')
+		LoadTestController controller = ControllerLoader.<LoadTestController> of('loadTestController.fxml')
+			.load()
 		then:
 		controller.testTable.getItems().isEmpty()
 	}
@@ -34,10 +34,8 @@ class ControllerLoaderSpec extends ApplicationSpec {
 		targetStage.getScene() == null
 
 		when:
-		WaitForAsyncUtils.waitForAsyncFx(1_000, () ->
-			new ControllerLoader<LoadTestController>()
-				.loadFxmlToStage('loadTestController.fxml', targetStage)
-		)
+		WaitForAsyncUtils.waitForAsyncFx(1_000, () -> ControllerLoader.<LoadTestController> of('loadTestController.fxml')
+			.withTargetStage(targetStage).load())
 
 		then:
 		targetStage.getScene() != null
@@ -46,7 +44,7 @@ class ControllerLoaderSpec extends ApplicationSpec {
 	def 'IOException during loading is mapped to IllegalState'() {
 
 		when:
-		new ControllerLoader<>().loadFxmlAndGetController('faultyStuff.fxml')
+		ControllerLoader.<LoadTestController> of('faultyStuff.fxml').load()
 		then:
 		def ex = thrown IllegalStateException
 		ex.message == "Encountered exception loading 'faultyStuff.fxml'"
