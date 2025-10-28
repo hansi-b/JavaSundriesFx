@@ -5,8 +5,8 @@ plugins {
 	id 'com.github.ben-manes.versions'
 }
 
-group 'org.hansib'
-version gitVersion()
+group = 'org.hansib'
+version = gitVersion()
 
 repositories {
 	mavenCentral()
@@ -23,11 +23,11 @@ repositories {
 dependencies {
 	implementation 'org.hansib:sundries:0.5.3'
 
-	implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.2'
-	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.18.2'
+	implementation 'com.fasterxml.jackson.core:jackson-databind:2.20.0'
+	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.20.0'
 
-	implementation 'org.apache.logging.log4j:log4j-api:2.24.2'
-	implementation 'org.apache.logging.log4j:log4j-core:2.24.2'
+	implementation 'org.apache.logging.log4j:log4j-api:2.25.2'
+	implementation 'org.apache.logging.log4j:log4j-core:2.25.2'
 }
 
 def isStable = {
