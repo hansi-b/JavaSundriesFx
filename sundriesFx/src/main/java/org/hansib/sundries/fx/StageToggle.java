@@ -66,4 +66,8 @@ public class StageToggle {
 		else
 			stage.show();
 	}
+
+	public Stage getStage() {
+		return stage;
+	}
 }
