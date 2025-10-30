@@ -1,6 +1,6 @@
 = JavaSundriesFx
 
-image:https://github.com/hansi-b/JavaSundriesFx/actions/workflows/gradle.yml/badge.svg[link="https://github.com/hansi-b/JavaSundriesFx/actions/workflows/gradle.yml"]
+image:https://github.com/hansi-b/JavaSundriesFx/actions/workflows/unit_tests.yml/badge.svg[link="https://github.com/hansi-b/JavaSundriesFx/actions/workflows/unit_tests.yml"]
 image:https://codecov.io/gh/hansi-b/javasundriesfx/branch/main/graph/badge.svg[link="https://codecov.io/gh/hansi-b/javasundriesfx"]
 
 Some JavaFX basics I often need in other projects.
