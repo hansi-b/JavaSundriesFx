@@ -19,7 +19,7 @@ publishing {
 			url = 'https://maven.pkg.github.com/hansi-b/JavaSundriesFx'
 			credentials {
 				username = project.findProperty("GITHUB_ACTOR") ?: ""
-				password = project.findProperty("GITHUB_REPO_PAT_RW") ?: ""
+				password = project.findProperty("GITHUB_REPO_PAT_PUB") ?: ""
 			}
 		}
 	}
