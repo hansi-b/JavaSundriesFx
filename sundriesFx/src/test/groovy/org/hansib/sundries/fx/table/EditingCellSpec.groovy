@@ -42,8 +42,6 @@ public class EditingCellSpec extends AppSpecWithScene {
 
 	def 'can edit cell'() {
 
-		given:
-		Thread.sleep(1000)
 		when:
 		def cell = lookup(".table-cell").nth(0).query()
 
