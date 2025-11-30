@@ -39,8 +39,8 @@ import org.hansib.sundries.Errors;
 
 public class AlertBuilder {
 
-	private AlertType alertType;
-	private String contentText;
+	private final AlertType alertType;
+	private final String contentText;
 	private Node contentPane;
 
 	private String title;
@@ -48,7 +48,7 @@ public class AlertBuilder {
 
 	private Boolean resizable;
 
-	private Map<ButtonType, String> buttonTypes = new LinkedHashMap<>();
+	private final Map<ButtonType, String> buttonTypes = new LinkedHashMap<>();
 	private ButtonType defaultButton;
 
 	public AlertBuilder(AlertType alertType, String contentText) {
@@ -118,7 +118,7 @@ public class AlertBuilder {
 
 	/**
 	 * Builds the alert, shows it, and waits for a response.
-	 * 
+	 *
 	 * @return the result of {@link Alert#showAndWait()}
 	 */
 	public Optional<ButtonType> showAndWait() {
@@ -128,7 +128,7 @@ public class AlertBuilder {
 	/**
 	 * Builds the alert, shows it, and waits for a response, and returns whether the
 	 * response was present and the argument result.
-	 * 
+	 *
 	 * @param expectedResult the result to check for
 	 * @return true if the response from the alert was present and equal to the
 	 *         expected result
