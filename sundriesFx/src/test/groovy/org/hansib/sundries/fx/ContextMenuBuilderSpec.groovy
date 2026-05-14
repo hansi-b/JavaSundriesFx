@@ -1,5 +1,6 @@
 package org.hansib.sundries.fx
 
+import javafx.scene.control.SeparatorMenuItem
 import javafx.stage.Stage
 
 import org.testfx.api.FxToolkit
@@ -26,6 +27,20 @@ public class ContextMenuBuilderSpec extends ApplicationSpec {
 		then:
 		cm.getItems().size() == 1
 		cm.getItems().get(0).getText() == 'Hello'
+	}
+
+	def 'can add separator'() {
+
+		given:
+		def cmb = new ContextMenuBuilder()
+		cmb.separator()
+
+		when:
+		def cm = cmb.build()
+
+		then:
+		cm.getItems().size() == 1
+		cm.getItems().get(0) instanceof SeparatorMenuItem
 	}
 
 

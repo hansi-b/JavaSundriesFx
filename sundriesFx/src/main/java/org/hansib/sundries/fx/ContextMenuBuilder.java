@@ -34,6 +34,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 
 import org.hansib.sundries.Errors;
 
@@ -65,6 +66,11 @@ public class ContextMenuBuilder {
 		if (disableOn != null)
 			item.disableProperty().bind(disableOn);
 		items.add(item);
+		return this;
+	}
+
+	public ContextMenuBuilder separator() {
+		items.add(new SeparatorMenuItem());
 		return this;
 	}
 
