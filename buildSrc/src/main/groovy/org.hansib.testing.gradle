@@ -8,16 +8,16 @@ repositories {
 }
 
 dependencies {
-	testImplementation 'org.apache.groovy:groovy-all:4.0.29'
+	testImplementation 'org.apache.groovy:groovy-all:5.0.6'
 
-	testImplementation 'net.bytebuddy:byte-buddy:1.17.8'
-	testImplementation 'org.spockframework:spock-core:2.4-M6-groovy-4.0'
+	testImplementation 'net.bytebuddy:byte-buddy:1.18.8'
+	testImplementation 'org.spockframework:spock-core:2.4-groovy-5.0'
 }
 
 testing {
 	suites {
 		test {
-			useJUnitJupiter '5.14.0'
+			useJUnitJupiter '6.0.3'
 		}
 	}
 }
