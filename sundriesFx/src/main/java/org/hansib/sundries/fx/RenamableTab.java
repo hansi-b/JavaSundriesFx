@@ -32,54 +32,58 @@ import javafx.scene.control.TextField;
 
 public class RenamableTab {
 
-	private static final String CSS_RENAMABLE_TAB_ERROR = "renamable-tab-error";
-	private static final String CSS_RENAMABLE_TAB_SELECTED = "renamable-tab-selected";
-	private static final String CSS_RENAMABLE_TAB_UNSELECTED = "renamable-tab-unselected";
+  private static final String CSS_RENAMABLE_TAB_ERROR = "renamable-tab-error";
+  private static final String CSS_RENAMABLE_TAB_SELECTED = "renamable-tab-selected";
+  private static final String CSS_RENAMABLE_TAB_UNSELECTED = "renamable-tab-unselected";
 
-	private final Tab tab;
-	private final TextField textField;
-	private final Label label;
-	private Styler styler;
+  private final Tab tab;
+  private final TextField textField;
+  private final Label label;
+  private Styler styler;
 
-	public RenamableTab(final String initialLabel) {
+  public RenamableTab(final String initialLabel) {
 
-		label = new Label(initialLabel);
-		styler = new Styler(label).with(CSS_RENAMABLE_TAB_UNSELECTED);
+    label = new Label(initialLabel);
+    styler = new Styler(label).with(CSS_RENAMABLE_TAB_UNSELECTED);
 
-		label.setOnMouseClicked(event -> {
-			if (event.getClickCount() == 2)
-				editLabel();
-		});
+    label.setOnMouseClicked(
+        event -> {
+          if (event.getClickCount() == 2) editLabel();
+        });
 
-		tab = new Tab();
-		tab.setGraphic(label);
+    tab = new Tab();
+    tab.setGraphic(label);
 
-		tab.selectedProperty().addListener((observable, oldValue, newValue) -> styler.ifOneElseOther(newValue,
-				CSS_RENAMABLE_TAB_SELECTED, CSS_RENAMABLE_TAB_UNSELECTED));
+    tab.selectedProperty()
+        .addListener(
+            (observable, oldValue, newValue) ->
+                styler.ifOneElseOther(
+                    newValue, CSS_RENAMABLE_TAB_SELECTED, CSS_RENAMABLE_TAB_UNSELECTED));
 
-		textField = new ValidatingTextFieldBuilder() //
-				.withInvalidCssStyleClass(CSS_RENAMABLE_TAB_ERROR) //
-				.withValidatedTextCallback(this::updateText) //
-				.build();
-	}
+    textField =
+        new ValidatingTextFieldBuilder()
+            .withInvalidCssStyleClass(CSS_RENAMABLE_TAB_ERROR)
+            .withValidatedTextCallback(this::updateText)
+            .build();
+  }
 
-	private void updateText(String text) {
-		label.setText(text);
-		tab.setGraphic(label);
-	}
+  private void updateText(String text) {
+    label.setText(text);
+    tab.setGraphic(label);
+  }
 
-	public Tab getTab() {
-		return tab;
-	}
+  public Tab getTab() {
+    return tab;
+  }
 
-	public StringProperty labelProperty() {
-		return label.textProperty();
-	}
+  public StringProperty labelProperty() {
+    return label.textProperty();
+  }
 
-	public void editLabel() {
-		textField.setText(label.getText());
-		tab.setGraphic(textField);
-		textField.selectAll();
-		textField.requestFocus();
-	}
+  public void editLabel() {
+    textField.setText(label.getText());
+    tab.setGraphic(textField);
+    textField.selectAll();
+    textField.requestFocus();
+  }
 }

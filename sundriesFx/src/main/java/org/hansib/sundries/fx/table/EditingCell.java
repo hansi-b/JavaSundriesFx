@@ -34,89 +34,89 @@ import javafx.util.StringConverter;
 
 import org.hansib.sundries.fx.ValidatingTextFieldBuilder;
 
-/**
- * Adapted from
- * https://docs.oracle.com/javase/8/javafx/user-interface-tutorial/table-view.htm
- */
+/** Adapted from https://docs.oracle.com/javase/8/javafx/user-interface-tutorial/table-view.htm */
 public class EditingCell<S, T> extends TableCell<S, T> { // NOSONAR
 
-	private static final String CSS_VALIDATON_ERROR = "validation-error";
+  private static final String CSS_VALIDATON_ERROR = "validation-error";
 
-	private TextField textField;
+  private TextField textField;
 
-	private final StringConverter<T> stringConverter;
+  private final StringConverter<T> stringConverter;
 
-	private BiPredicate<TableCell<S, T>, String> cellValidator;
+  private BiPredicate<TableCell<S, T>, String> cellValidator;
 
-	public EditingCell(StringConverter<T> stringConverter, BiPredicate<TableCell<S, T>, String> cellValidator) {
-		this.stringConverter = stringConverter;
-		this.cellValidator = cellValidator;
+  public EditingCell(
+      StringConverter<T> stringConverter, BiPredicate<TableCell<S, T>, String> cellValidator) {
+    this.stringConverter = stringConverter;
+    this.cellValidator = cellValidator;
 
-		setEditable(true);
-	}
+    setEditable(true);
+  }
 
-	@Override
-	public void startEdit() {
-		if (!isEmpty()) {
-			super.startEdit();
-			createTextField();
-			setText(null);
-			setGraphic(textField);
-			textField.selectAll();
-		}
-	}
+  @Override
+  public void startEdit() {
+    if (!isEmpty()) {
+      super.startEdit();
+      createTextField();
+      setText(null);
+      setGraphic(textField);
+      textField.selectAll();
+    }
+  }
 
-	@Override
-	public void cancelEdit() {
-		super.cancelEdit();
+  @Override
+  public void cancelEdit() {
+    super.cancelEdit();
 
-		setText(stringConverter.toString(getItem()));
-		setGraphic(null);
-	}
+    setText(stringConverter.toString(getItem()));
+    setGraphic(null);
+  }
 
-	@Override
-	public void updateItem(T item, boolean empty) {
-		super.updateItem(item, empty);
+  @Override
+  public void updateItem(T item, boolean empty) {
+    super.updateItem(item, empty);
 
-		if (empty) {
-			setText(null);
-			setGraphic(null);
-		} else {
-			if (isEditing()) {
-				if (textField != null) {
-					textField.setText(getString());
-				}
-				setText(null);
-				setGraphic(textField);
-			} else {
-				setText(getString());
-				setGraphic(null);
-			}
-		}
-	}
+    if (empty) {
+      setText(null);
+      setGraphic(null);
+    } else {
+      if (isEditing()) {
+        if (textField != null) {
+          textField.setText(getString());
+        }
+        setText(null);
+        setGraphic(textField);
+      } else {
+        setText(getString());
+        setGraphic(null);
+      }
+    }
+  }
 
-	private void createTextField() {
+  private void createTextField() {
 
-		textField = new ValidatingTextFieldBuilder(getString()) //
-				.withValidation(text -> cellValidator.test(this, text)) //
-				.withInvalidCssStyleClass(CSS_VALIDATON_ERROR) //
-				.withValidatedTextCallback(t -> commit()) //
-				.build();
-		textField.setOnKeyReleased(t -> {
-			if (t.getCode() == KeyCode.ESCAPE) {
-				cancelEdit();
-				t.consume();
-			}
-		});
-		textField.setMinWidth(getWidth() - getGraphicTextGap() * 2);
-	}
+    textField =
+        new ValidatingTextFieldBuilder(getString())
+            .withValidation(text -> cellValidator.test(this, text))
+            .withInvalidCssStyleClass(CSS_VALIDATON_ERROR)
+            .withValidatedTextCallback(t -> commit())
+            .build();
+    textField.setOnKeyReleased(
+        t -> {
+          if (t.getCode() == KeyCode.ESCAPE) {
+            cancelEdit();
+            t.consume();
+          }
+        });
+    textField.setMinWidth(getWidth() - getGraphicTextGap() * 2);
+  }
 
-	private void commit() {
-		String t = textField.getText();
-		commitEdit(stringConverter.fromString(t));
-	}
+  private void commit() {
+    String t = textField.getText();
+    commitEdit(stringConverter.fromString(t));
+  }
 
-	private String getString() {
-		return getItem() == null ? "" : stringConverter.toString(getItem());
-	}
+  private String getString() {
+    return getItem() == null ? "" : stringConverter.toString(getItem());
+  }
 }

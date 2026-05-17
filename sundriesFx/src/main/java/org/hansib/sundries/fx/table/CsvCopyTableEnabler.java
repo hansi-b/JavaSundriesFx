@@ -38,53 +38,51 @@ import javafx.scene.input.KeyCombination;
 import org.hansib.sundries.fx.ContextMenuBuilder;
 
 public class CsvCopyTableEnabler {
-	private static final KeyCodeCombination defaultCopyControlKey = new KeyCodeCombination(KeyCode.C,
-			KeyCombination.CONTROL_DOWN);
-	private static final KeyCodeCombination defaultSelectAllControlKey = new KeyCodeCombination(KeyCode.A,
-			KeyCombination.CONTROL_DOWN);
+  private static final KeyCodeCombination defaultCopyControlKey =
+      new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_DOWN);
+  private static final KeyCodeCombination defaultSelectAllControlKey =
+      new KeyCodeCombination(KeyCode.A, KeyCombination.CONTROL_DOWN);
 
-	/**
-	 * a table row that can be joined to a CSV String
-	 */
-	public interface CsvRow {
-		String asCsv();
-	}
+  /** a table row that can be joined to a CSV String */
+  public interface CsvRow {
+    String asCsv();
+  }
 
-	/**
-	 * Is called for the menu item strings.
-	 */
-	public interface MenuItemsLocalizer {
-		String selectAll();
+  /** Is called for the menu item strings. */
+  public interface MenuItemsLocalizer {
+    String selectAll();
 
-		String copySelection();
-	}
+    String copySelection();
+  }
 
-	private final MenuItemsLocalizer menuItemsLocalizer;
+  private final MenuItemsLocalizer menuItemsLocalizer;
 
-	public CsvCopyTableEnabler(MenuItemsLocalizer menuItemsLocalizer) {
-		this.menuItemsLocalizer = menuItemsLocalizer;
-	}
+  public CsvCopyTableEnabler(MenuItemsLocalizer menuItemsLocalizer) {
+    this.menuItemsLocalizer = menuItemsLocalizer;
+  }
 
-	public <T extends CsvRow> void enableSelectAndCopyCapability(final TableView<T> table) {
-		table.setOnKeyReleased(e -> {
-			if (defaultCopyControlKey.match(e) && table == e.getSource())
-				copyCsvToClipboard(table);
-			else if (defaultSelectAllControlKey.match(e) && table == e.getSource())
-				table.getSelectionModel().selectAll();
-		});
-		table.setContextMenu(new ContextMenuBuilder() //
-				.item(menuItemsLocalizer.selectAll(), e -> table.getSelectionModel().selectAll()) //
-				.item(menuItemsLocalizer.copySelection(), e -> copyCsvToClipboard(table)) //
-				.build());
-	}
+  public <T extends CsvRow> void enableSelectAndCopyCapability(final TableView<T> table) {
+    table.setOnKeyReleased(
+        e -> {
+          if (defaultCopyControlKey.match(e) && table == e.getSource()) copyCsvToClipboard(table);
+          else if (defaultSelectAllControlKey.match(e) && table == e.getSource())
+            table.getSelectionModel().selectAll();
+        });
+    table.setContextMenu(
+        new ContextMenuBuilder()
+            .item(menuItemsLocalizer.selectAll(), e -> table.getSelectionModel().selectAll())
+            .item(menuItemsLocalizer.copySelection(), e -> copyCsvToClipboard(table))
+            .build());
+  }
 
-	private static <T extends CsvRow> void copyCsvToClipboard(final TableView<T> table) {
-		final ObservableList<T> selectedItems = table.getSelectionModel().getSelectedItems();
-		final String csv = selectedItems.stream().map(T::asCsv).collect(Collectors.joining(System.lineSeparator()));
+  private static <T extends CsvRow> void copyCsvToClipboard(final TableView<T> table) {
+    final ObservableList<T> selectedItems = table.getSelectionModel().getSelectedItems();
+    final String csv =
+        selectedItems.stream().map(T::asCsv).collect(Collectors.joining(System.lineSeparator()));
 
-		final ClipboardContent clipboardContent = new ClipboardContent();
-		clipboardContent.putString(csv);
+    final ClipboardContent clipboardContent = new ClipboardContent();
+    clipboardContent.putString(csv);
 
-		Clipboard.getSystemClipboard().setContent(clipboardContent);
-	}
+    Clipboard.getSystemClipboard().setContent(clipboardContent);
+  }
 }

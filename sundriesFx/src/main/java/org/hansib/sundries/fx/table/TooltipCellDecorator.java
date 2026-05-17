@@ -35,43 +35,43 @@ import javafx.util.Duration;
 
 public class TooltipCellDecorator<O, T> implements Callback<TableColumn<O, T>, TableCell<O, T>> {
 
-	private final Callback<TableColumn<O, T>, TableCell<O, T>> columnCellFactory;
-	private final Function<T, String> tooltipStringFunc;
+  private final Callback<TableColumn<O, T>, TableCell<O, T>> columnCellFactory;
+  private final Function<T, String> tooltipStringFunc;
 
-	private TooltipCellDecorator(final Callback<TableColumn<O, T>, TableCell<O, T>> columnCellFactory,
-			final Function<T, String> tooltipStringFunc) {
-		this.columnCellFactory = columnCellFactory;
-		this.tooltipStringFunc = tooltipStringFunc;
-	}
+  private TooltipCellDecorator(
+      final Callback<TableColumn<O, T>, TableCell<O, T>> columnCellFactory,
+      final Function<T, String> tooltipStringFunc) {
+    this.columnCellFactory = columnCellFactory;
+    this.tooltipStringFunc = tooltipStringFunc;
+  }
 
-	public static <S, T> void decorateColumn(final TableColumn<S, T> column,
-			final Function<T, String> tooltipStringFunc) {
-		column.setCellFactory(new TooltipCellDecorator<>(column.getCellFactory(), tooltipStringFunc));
-	}
+  public static <S, T> void decorateColumn(
+      final TableColumn<S, T> column, final Function<T, String> tooltipStringFunc) {
+    column.setCellFactory(new TooltipCellDecorator<>(column.getCellFactory(), tooltipStringFunc));
+  }
 
-	@Override
-	public TableCell<O, T> call(final TableColumn<O, T> col) {
-		final TableCell<O, T> cell = columnCellFactory.call(col);
+  @Override
+  public TableCell<O, T> call(final TableColumn<O, T> col) {
+    final TableCell<O, T> cell = columnCellFactory.call(col);
 
-		cell.itemProperty().addListener((observable, oldValue, newValue) -> {
+    cell.itemProperty()
+        .addListener(
+            (observable, oldValue, newValue) -> {
+              final String tipValue = tooltipStringFunc.apply(newValue);
+              if (tipValue == null) cell.setTooltip(null);
+              else {
+                if (cell.getTooltip() == null) cell.setTooltip(createTooltip());
+                cell.getTooltip().textProperty().set(tipValue);
+              }
+            });
 
-			final String tipValue = tooltipStringFunc.apply(newValue);
-			if (tipValue == null)
-				cell.setTooltip(null);
-			else {
-				if (cell.getTooltip() == null)
-					cell.setTooltip(createTooltip());
-				cell.getTooltip().textProperty().set(tipValue);
-			}
-		});
+    return cell;
+  }
 
-		return cell;
-	}
-
-	private static Tooltip createTooltip() {
-		final Tooltip tooltip = new Tooltip();
-		tooltip.setShowDelay(Duration.millis(700));
-		tooltip.setShowDuration(Duration.minutes(1));
-		return tooltip;
-	}
+  private static Tooltip createTooltip() {
+    final Tooltip tooltip = new Tooltip();
+    tooltip.setShowDelay(Duration.millis(700));
+    tooltip.setShowDuration(Duration.minutes(1));
+    return tooltip;
+  }
 }

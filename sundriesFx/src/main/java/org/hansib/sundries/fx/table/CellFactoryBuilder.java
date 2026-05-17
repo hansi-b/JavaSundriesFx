@@ -34,53 +34,62 @@ import javafx.util.Callback;
 
 public class CellFactoryBuilder<S, T> {
 
-	private final Callback<TableColumn<S, T>, TableCell<S, T>> defaultCellFactory;
+  private final Callback<TableColumn<S, T>, TableCell<S, T>> defaultCellFactory;
 
-	private Function<T, String> formatter;
-	private boolean withDragSelection;
+  private Function<T, String> formatter;
+  private boolean withDragSelection;
 
-	public CellFactoryBuilder(Callback<TableColumn<S, T>, TableCell<S, T>> defaultCellFactory) {
-		this.defaultCellFactory = defaultCellFactory;
-	}
+  public CellFactoryBuilder(Callback<TableColumn<S, T>, TableCell<S, T>> defaultCellFactory) {
+    this.defaultCellFactory = defaultCellFactory;
+  }
 
-	public CellFactoryBuilder(TableColumn<S, T> column) {
-		this(column.getCellFactory());
-	}
+  public CellFactoryBuilder(TableColumn<S, T> column) {
+    this(column.getCellFactory());
+  }
 
-	public CellFactoryBuilder<S, T> format(Function<T, String> formatter) {
-		this.formatter = formatter;
-		return this;
-	}
+  public CellFactoryBuilder<S, T> format(Function<T, String> formatter) {
+    this.formatter = formatter;
+    return this;
+  }
 
-	public CellFactoryBuilder<S, T> withDragSelection() {
-		this.withDragSelection = true;
-		return this;
-	}
+  public CellFactoryBuilder<S, T> withDragSelection() {
+    this.withDragSelection = true;
+    return this;
+  }
 
-	public Callback<TableColumn<S, T>, TableCell<S, T>> build() {
-		Callback<TableColumn<S, T>, TableCell<S, T>> cellFactory;
-		if (formatter != null)
-			cellFactory = c -> new FormattingTableCell<>(formatter);
-		else
-			cellFactory = defaultCellFactory;
+  public Callback<TableColumn<S, T>, TableCell<S, T>> build() {
+    Callback<TableColumn<S, T>, TableCell<S, T>> cellFactory;
+    if (formatter != null) cellFactory = c -> new FormattingTableCell<>(formatter);
+    else cellFactory = defaultCellFactory;
 
-		if (withDragSelection)
-			cellFactory = decorate(cellFactory, cell -> {
-				cell.setOnDragDetected(e -> {
-					cell.startFullDrag();
-					cell.getTableColumn().getTableView().getSelectionModel().select(cell.getIndex(),
-							cell.getTableColumn());
-				});
-				cell.setOnMouseDragEntered(e -> cell.getTableColumn().getTableView().getSelectionModel()
-						.select(cell.getIndex(), cell.getTableColumn()));
-				return cell;
-			});
+    if (withDragSelection)
+      cellFactory =
+          decorate(
+              cellFactory,
+              cell -> {
+                cell.setOnDragDetected(
+                    e -> {
+                      cell.startFullDrag();
+                      cell.getTableColumn()
+                          .getTableView()
+                          .getSelectionModel()
+                          .select(cell.getIndex(), cell.getTableColumn());
+                    });
+                cell.setOnMouseDragEntered(
+                    e ->
+                        cell.getTableColumn()
+                            .getTableView()
+                            .getSelectionModel()
+                            .select(cell.getIndex(), cell.getTableColumn()));
+                return cell;
+              });
 
-		return cellFactory;
-	}
+    return cellFactory;
+  }
 
-	private static <X, Y> Callback<TableColumn<X, Y>, TableCell<X, Y>> decorate(
-			Callback<TableColumn<X, Y>, TableCell<X, Y>> orgCellFactory, UnaryOperator<TableCell<X, Y>> decor) {
-		return param -> decor.apply(orgCellFactory.call(param));
-	}
+  private static <X, Y> Callback<TableColumn<X, Y>, TableCell<X, Y>> decorate(
+      Callback<TableColumn<X, Y>, TableCell<X, Y>> orgCellFactory,
+      UnaryOperator<TableCell<X, Y>> decor) {
+    return param -> decor.apply(orgCellFactory.call(param));
+  }
 }

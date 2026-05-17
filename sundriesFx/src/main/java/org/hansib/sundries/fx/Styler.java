@@ -28,96 +28,88 @@ package org.hansib.sundries.fx;
 import javafx.css.Styleable;
 
 /**
- * Deals with adding and removing style classes (CSS). Just hides all the
- * tedious if..else add/remove details.
- * 
- * NB: Maintains a set-like notion of style class membership: Removing a class
- * removes all its occurrences from the classes list; adding a class has no
- * effect if it is already present.
+ * Deals with adding and removing style classes (CSS). Just hides all the tedious if..else
+ * add/remove details.
+ *
+ * <p>NB: Maintains a set-like notion of style class membership: Removing a class removes all its
+ * occurrences from the classes list; adding a class has no effect if it is already present.
  */
 public class Styler {
 
-	private final Styleable styleable;
+  private final Styleable styleable;
 
-	public Styler(Styleable styleable) {
-		this.styleable = styleable;
-	}
+  public Styler(Styleable styleable) {
+    this.styleable = styleable;
+  }
 
-	public Styler with(String... styles) {
-		for (String style : styles)
-			add(style);
-		return this;
-	}
+  public Styler with(String... styles) {
+    for (String style : styles) add(style);
+    return this;
+  }
 
-	/**
-	 * Adds the argument style if it is not already present.
-	 * 
-	 * @param styleClass the style class name to add
-	 * @return true if this style class was added, false if it was already present
-	 */
-	public boolean add(String styleClass) {
-		if (contains(styleClass))
-			return false;
-		return styleable.getStyleClass().add(styleClass);
-	}
+  /**
+   * Adds the argument style if it is not already present.
+   *
+   * @param styleClass the style class name to add
+   * @return true if this style class was added, false if it was already present
+   */
+  public boolean add(String styleClass) {
+    if (contains(styleClass)) return false;
+    return styleable.getStyleClass().add(styleClass);
+  }
 
-	/**
-	 * Removes all instances of the argument style.
-	 * 
-	 * @param styleClass the style class name to remove
-	 * @return true if this style class was removed at least once, false if it was
-	 *         not present
-	 */
-	public boolean remove(String styleClass) {
-		return styleable.getStyleClass().removeIf(styleClass::equals);
-	}
+  /**
+   * Removes all instances of the argument style.
+   *
+   * @param styleClass the style class name to remove
+   * @return true if this style class was removed at least once, false if it was not present
+   */
+  public boolean remove(String styleClass) {
+    return styleable.getStyleClass().removeIf(styleClass::equals);
+  }
 
-	/**
-	 * Removes all instances of the argument styles.
-	 * 
-	 * @param styleClasses the style class names to remove
-	 * @return true if any of the argument classes was removed
-	 */
-	public boolean removeAll(String... styleClasses) {
-		return styleable.getStyleClass().removeAll(styleClasses);
-	}
+  /**
+   * Removes all instances of the argument styles.
+   *
+   * @param styleClasses the style class names to remove
+   * @return true if any of the argument classes was removed
+   */
+  public boolean removeAll(String... styleClasses) {
+    return styleable.getStyleClass().removeAll(styleClasses);
+  }
 
-	public boolean contains(String styleClass) {
-		return styleable.getStyleClass().contains(styleClass);
-	}
+  public boolean contains(String styleClass) {
+    return styleable.getStyleClass().contains(styleClass);
+  }
 
-	/**
-	 * Adds or removes the argument styleClass depending on the argument boolean; if
-	 * true, the class is added, otherwise removed.
-	 * 
-	 * @param styleTest  the test for the style; on true, the styleClass is added,
-	 *                   otherwise removed
-	 * @param styleClass the styleClass to be added or removed
-	 */
-	public void addOrRemove(boolean styleTest, String styleClass) {
-		if (styleTest)
-			add(styleClass);
-		else
-			remove(styleClass);
-	}
+  /**
+   * Adds or removes the argument styleClass depending on the argument boolean; if true, the class
+   * is added, otherwise removed.
+   *
+   * @param styleTest the test for the style; on true, the styleClass is added, otherwise removed
+   * @param styleClass the styleClass to be added or removed
+   */
+  public void addOrRemove(boolean styleTest, String styleClass) {
+    if (styleTest) add(styleClass);
+    else remove(styleClass);
+  }
 
-	/**
-	 * Adds one of the two argument styleClasses depending on the argument boolean,
-	 * and removes the respective other; if the test is true, the oneeStyleClass is
-	 * added, and the otherStyleClass is removed; on a false test, the other way
-	 * around.
-	 * 
-	 * @param styleTest       the test for the style
-	 * @param oneStyleClass   the styleClass to be added on a true test
-	 * @param otherStyleClass the styleClass to be added on a false test
-	 */
-	public void ifOneElseOther(boolean styleTest, String oneStyleClass, String otherStyleClass) {
-		if (styleTest) {
-			remove(otherStyleClass);
-			add(oneStyleClass);
-		} else {
-			remove(oneStyleClass);
-			add(otherStyleClass);
-		}
-	}
+  /**
+   * Adds one of the two argument styleClasses depending on the argument boolean, and removes the
+   * respective other; if the test is true, the oneeStyleClass is added, and the otherStyleClass is
+   * removed; on a false test, the other way around.
+   *
+   * @param styleTest the test for the style
+   * @param oneStyleClass the styleClass to be added on a true test
+   * @param otherStyleClass the styleClass to be added on a false test
+   */
+  public void ifOneElseOther(boolean styleTest, String oneStyleClass, String otherStyleClass) {
+    if (styleTest) {
+      remove(otherStyleClass);
+      add(oneStyleClass);
+    } else {
+      remove(oneStyleClass);
+      add(otherStyleClass);
+    }
+  }
 }

@@ -39,50 +39,48 @@ import javafx.scene.control.SeparatorMenuItem;
 import org.hansib.sundries.Errors;
 
 /**
- * A simple builder for {@link ContextMenu}. Mainly syntactic sugar for slightly
- * more elegant creation.
+ * A simple builder for {@link ContextMenu}. Mainly syntactic sugar for slightly more elegant
+ * creation.
  */
 public class ContextMenuBuilder {
 
-	private final List<MenuItem> items;
+  private final List<MenuItem> items;
 
-	public ContextMenuBuilder() {
-		items = new ArrayList<>();
-	}
+  public ContextMenuBuilder() {
+    items = new ArrayList<>();
+  }
 
-	public ContextMenuBuilder item(String label, EventHandler<ActionEvent> eventHandler) {
-		return itemInternal(label, eventHandler, null);
-	}
+  public ContextMenuBuilder item(String label, EventHandler<ActionEvent> eventHandler) {
+    return itemInternal(label, eventHandler, null);
+  }
 
-	public ContextMenuBuilder item(String label, EventHandler<ActionEvent> eventHandler,
-			ObservableValue<Boolean> disableOn) {
-		return itemInternal(label, eventHandler, Objects.requireNonNull(disableOn));
-	}
+  public ContextMenuBuilder item(
+      String label, EventHandler<ActionEvent> eventHandler, ObservableValue<Boolean> disableOn) {
+    return itemInternal(label, eventHandler, Objects.requireNonNull(disableOn));
+  }
 
-	private ContextMenuBuilder itemInternal(String label, EventHandler<ActionEvent> eventHandler,
-			ObservableValue<Boolean> disableOn) {
-		final MenuItem item = new MenuItem(label);
-		item.setOnAction(eventHandler);
-		if (disableOn != null)
-			item.disableProperty().bind(disableOn);
-		items.add(item);
-		return this;
-	}
+  private ContextMenuBuilder itemInternal(
+      String label, EventHandler<ActionEvent> eventHandler, ObservableValue<Boolean> disableOn) {
+    final MenuItem item = new MenuItem(label);
+    item.setOnAction(eventHandler);
+    if (disableOn != null) item.disableProperty().bind(disableOn);
+    items.add(item);
+    return this;
+  }
 
-	public ContextMenuBuilder separator() {
-		items.add(new SeparatorMenuItem());
-		return this;
-	}
+  public ContextMenuBuilder separator() {
+    items.add(new SeparatorMenuItem());
+    return this;
+  }
 
-	/**
-	 * @return a new context menu with this builder's current menu items
-	 */
-	public ContextMenu build() {
-		if (items.isEmpty())
-			throw Errors.illegalState("Cannot build context menu without menu items.");
+  /**
+   * @return a new context menu with this builder's current menu items
+   */
+  public ContextMenu build() {
+    if (items.isEmpty()) throw Errors.illegalState("Cannot build context menu without menu items.");
 
-		ContextMenu cm = new ContextMenu();
-		cm.getItems().addAll(items);
-		return cm;
-	}
+    ContextMenu cm = new ContextMenu();
+    cm.getItems().addAll(items);
+    return cm;
+  }
 }

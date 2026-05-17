@@ -32,19 +32,17 @@ import javafx.scene.control.TableCell;
 
 class FormattingTableCell<S, T> extends TableCell<S, T> { // NOSONAR
 
-	private final Function<T, String> formatter;
+  private final Function<T, String> formatter;
 
-	FormattingTableCell(Function<T, String> formatter) {
-		Objects.nonNull(formatter);
-		this.formatter = formatter;
-	}
+  FormattingTableCell(Function<T, String> formatter) {
+    Objects.nonNull(formatter);
+    this.formatter = formatter;
+  }
 
-	/**
-	 * Compare with javafx.scene.control.TableColumn.DEFAULT_CELL_FACTORY
-	 */
-	@Override
-	public void updateItem(final T item, final boolean empty) {
-		super.updateItem(item, empty);
-		setText(item == null || empty ? null : formatter.apply(item));
-	}
+  /** Compare with javafx.scene.control.TableColumn.DEFAULT_CELL_FACTORY */
+  @Override
+  public void updateItem(final T item, final boolean empty) {
+    super.updateItem(item, empty);
+    setText(item == null || empty ? null : formatter.apply(item));
+  }
 }

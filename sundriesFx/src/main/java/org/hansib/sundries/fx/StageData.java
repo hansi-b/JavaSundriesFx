@@ -27,48 +27,43 @@ package org.hansib.sundries.fx;
 
 import javafx.stage.Stage;
 
-/**
- * The basic data of a stage we might want to save and restore.
- */
+/** The basic data of a stage we might want to save and restore. */
 public record StageData(double x, double y, double width, double height, boolean isShowing) {
 
-	/**
-	 * The constant denoting we have no data.
-	 */
-	public final static StageData NONE = new StageData(Double.NaN, Double.NaN, Double.NaN, Double.NaN, false);
+  /** The constant denoting we have no data. */
+  public static final StageData NONE =
+      new StageData(Double.NaN, Double.NaN, Double.NaN, Double.NaN, false);
 
-	/**
-	 * @return the stage data of the argument {@code stage}
-	 */
-	public static StageData of(Stage stage) {
-		return new StageData(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight(), stage.isShowing());
-	}
+  /**
+   * @return the stage data of the argument {@code stage}
+   */
+  public static StageData of(Stage stage) {
+    return new StageData(
+        stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight(), stage.isShowing());
+  }
 
-	/**
-	 * @return true if {@code this} equals {@link StageData#NONE}
-	 */
-	public boolean isNone() {
-		return this.equals(NONE);
-	}
+  /**
+   * @return true if {@code this} equals {@link StageData#NONE}
+   */
+  public boolean isNone() {
+    return this.equals(NONE);
+  }
 
-	/**
-	 * Applies this {@link StageData} to the argument {@code stage} by setting the
-	 * available fields. Does nothing when called on {@link StageData#NONE}.
-	 * 
-	 * @param stage the target {@link Stage} on which to apply these data
-	 */
-	public void apply(Stage stage) {
+  /**
+   * Applies this {@link StageData} to the argument {@code stage} by setting the available fields.
+   * Does nothing when called on {@link StageData#NONE}.
+   *
+   * @param stage the target {@link Stage} on which to apply these data
+   */
+  public void apply(Stage stage) {
 
-		if (isNone())
-			return;
+    if (isNone()) return;
 
-		stage.setX(x);
-		stage.setY(y);
-		stage.setWidth(width);
-		stage.setHeight(height);
-		if (isShowing)
-			stage.show();
-		else
-			stage.hide();
-	}
+    stage.setX(x);
+    stage.setY(y);
+    stage.setWidth(width);
+    stage.setHeight(height);
+    if (isShowing) stage.show();
+    else stage.hide();
+  }
 }

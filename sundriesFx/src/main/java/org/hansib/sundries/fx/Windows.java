@@ -30,12 +30,14 @@ import javafx.stage.Window;
 
 public class Windows {
 
-	/**
-	 * @return the last, i.e., currently focused stage
-	 */
-	public static Stage findFocusedStage() {
-		return Window.getWindows().stream()//
-				.map(w -> (w instanceof Stage s) ? s : null) //
-				.filter(w -> w != null && w.isFocused()).reduce((a, b) -> b).orElse(null);
-	}
+  /**
+   * @return the last, i.e., currently focused stage
+   */
+  public static Stage findFocusedStage() {
+    return Window.getWindows().stream()
+        .map(w -> (w instanceof Stage s) ? s : null)
+        .filter(w -> w != null && w.isFocused())
+        .reduce((a, b) -> b)
+        .orElse(null);
+  }
 }

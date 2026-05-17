@@ -31,19 +31,19 @@ import javafx.util.StringConverter;
 
 public class Converters {
 
-	public <E> StringConverter<E> stringConverter(Function<E, String> toStringCall,
-			Function<String, E> fromStringCall) {
-		return new StringConverter<E>() {
+  public <E> StringConverter<E> stringConverter(
+      Function<E, String> toStringCall, Function<String, E> fromStringCall) {
+    return new StringConverter<E>() {
 
-			@Override
-			public String toString(E object) {
-				return toStringCall.apply(object);
-			}
+      @Override
+      public String toString(E object) {
+        return toStringCall.apply(object);
+      }
 
-			@Override
-			public E fromString(String string) {
-				return fromStringCall.apply(string);
-			}
-		};
-	}
+      @Override
+      public E fromString(String string) {
+        return fromStringCall.apply(string);
+      }
+    };
+  }
 }

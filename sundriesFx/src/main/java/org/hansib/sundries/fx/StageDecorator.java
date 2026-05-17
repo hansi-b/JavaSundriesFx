@@ -33,32 +33,32 @@ import javafx.stage.Stage;
 
 public class StageDecorator {
 
-	private final Stage stage;
+  private final Stage stage;
 
-	public StageDecorator(Stage stage) {
-		this.stage = Objects.requireNonNull(stage);
-	}
+  public StageDecorator(Stage stage) {
+    this.stage = Objects.requireNonNull(stage);
+  }
 
-	/**
-	 * Makes this decorator's stage resize to its previous size when reopened.
-	 */
-	public void addSizeRestore() {
-		stage.setOnShown(composeHandlers(e -> {
-			stage.setX(stage.getX());
-			stage.setY(stage.getY());
-			stage.setWidth(stage.getWidth());
-			stage.setHeight(stage.getHeight());
-		}, stage.getOnShown()));
-	}
+  /** Makes this decorator's stage resize to its previous size when reopened. */
+  public void addSizeRestore() {
+    stage.setOnShown(
+        composeHandlers(
+            e -> {
+              stage.setX(stage.getX());
+              stage.setY(stage.getY());
+              stage.setWidth(stage.getWidth());
+              stage.setHeight(stage.getHeight());
+            },
+            stage.getOnShown()));
+  }
 
-	private static <E extends Event> EventHandler<E> composeHandlers(EventHandler<E> first, EventHandler<E> second) {
-		if (first == null)
-			return second;
-		if (second == null)
-			return first;
-		return event -> {
-			first.handle(event);
-			second.handle(event);
-		};
-	}
+  private static <E extends Event> EventHandler<E> composeHandlers(
+      EventHandler<E> first, EventHandler<E> second) {
+    if (first == null) return second;
+    if (second == null) return first;
+    return event -> {
+      first.handle(event);
+      second.handle(event);
+    };
+  }
 }
