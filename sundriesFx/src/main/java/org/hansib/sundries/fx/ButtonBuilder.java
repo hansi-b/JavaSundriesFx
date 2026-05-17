@@ -25,6 +25,7 @@
  */
 package org.hansib.sundries.fx;
 
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -36,11 +37,13 @@ public class ButtonBuilder {
   private final Button button;
 
   private Node graphic;
+  private String tooltip;
+
   private EventHandler<ActionEvent> handler;
 
   private Boolean disabled;
 
-  private String tooltip;
+  private ObservableValue<Boolean> disableOn;
 
   public ButtonBuilder(Button button) {
     this.button = button;
@@ -71,11 +74,17 @@ public class ButtonBuilder {
     return this;
   }
 
+  public ButtonBuilder disableOn(ObservableValue<Boolean> observable) {
+    this.disableOn = observable;
+    return this;
+  }
+
   public Button build() {
     if (graphic != null) button.setGraphic(graphic);
     if (handler != null) button.setOnAction(handler);
     if (disabled != null) button.setDisable(disabled);
     if (tooltip != null) button.setTooltip(new Tooltip(tooltip));
+    if (disableOn != null) button.disableProperty().bind(disableOn);
 
     return button;
   }
