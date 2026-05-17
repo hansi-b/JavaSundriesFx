@@ -15,42 +15,42 @@ import org.hansib.sundries.fx.AppSpecWithScene
 
 public class EditingCellSpec extends AppSpecWithScene {
 
-	private DefaultStringConverter stringConverter = new DefaultStringConverter()
+    private DefaultStringConverter stringConverter = new DefaultStringConverter()
 
-	private TableView tableView
+    private TableView tableView
 
-	@Override
-	protected Scene createScene() {
+    @Override
+    protected Scene createScene() {
 
-		Map row = new HashMap<>(2)
-		row.put('name', 'alice')
+	Map row = new HashMap<>(2)
+	row.put('name', 'alice')
 
-		tableView = new TableView()
-		tableView.setEditable(true)
-		tableView.setItems(observableArrayList(row))
+	tableView = new TableView()
+	tableView.setEditable(true)
+	tableView.setItems(observableArrayList(row))
 
-		def nameCol = new TableColumn('name')
-		tableView.getColumns().setAll(nameCol)
+	def nameCol = new TableColumn('name')
+	tableView.getColumns().setAll(nameCol)
 
-		nameCol.setCellValueFactory(new MapValueFactory<>('name'))
-		nameCol.setCellFactory(e -> new EditingCell(stringConverter, (c, s) -> s != null && !s.isEmpty()))
-		nameCol.prefWidthProperty().bind(tableView.widthProperty().multiply(.95))
-		nameCol.setEditable(true)
+	nameCol.setCellValueFactory(new MapValueFactory<>('name'))
+	nameCol.setCellFactory(e -> new EditingCell(stringConverter, (c, s) -> s != null && !s.isEmpty()))
+	nameCol.prefWidthProperty().bind(tableView.widthProperty().multiply(.95))
+	nameCol.setEditable(true)
 
-		return new Scene(tableView, 100, 80)
-	}
+	return new Scene(tableView, 100, 80)
+    }
 
-	def 'can edit cell'() {
+    def 'can edit cell'() {
 
-		when:
-		def cell = lookup(".table-cell").nth(0).query()
+	when:
+	def cell = lookup(".table-cell").nth(0).query()
 
-		doubleClickOn(cell)
-		clickOn(cell)
-		write('charly')
-		type(KeyCode.ENTER)
+	doubleClickOn(cell)
+	clickOn(cell)
+	write('charly')
+	type(KeyCode.ENTER)
 
-		then:
-		assertThat(tableView, hasTableCell('charly'))
-	}
+	then:
+	assertThat(tableView, hasTableCell('charly'))
+    }
 }

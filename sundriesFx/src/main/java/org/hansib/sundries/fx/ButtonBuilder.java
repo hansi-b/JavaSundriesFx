@@ -29,6 +29,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Tooltip;
 
 public class ButtonBuilder {
 
@@ -39,12 +40,19 @@ public class ButtonBuilder {
 
   private Boolean disabled;
 
+  private String tooltip;
+
   public ButtonBuilder(Button button) {
     this.button = button;
   }
 
   public ButtonBuilder graphic(Node graphic) {
     this.graphic = graphic;
+    return this;
+  }
+
+  public ButtonBuilder tooltip(String text) {
+    this.tooltip = text;
     return this;
   }
 
@@ -67,6 +75,7 @@ public class ButtonBuilder {
     if (graphic != null) button.setGraphic(graphic);
     if (handler != null) button.setOnAction(handler);
     if (disabled != null) button.setDisable(disabled);
+    if (tooltip != null) button.setTooltip(new Tooltip(tooltip));
 
     return button;
   }

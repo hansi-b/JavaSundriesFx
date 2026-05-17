@@ -8,105 +8,105 @@ import org.testfx.framework.spock.ApplicationSpec
 
 public class StylerSpec extends ApplicationSpec {
 
-	private Label styleable
-	private Styler styler
+    private Label styleable
+    private Styler styler
 
-	@Override
-	public void start(Stage stage) throws Exception {
-		FxToolkit.registerPrimaryStage()
-		styleable = new Label()
-	}
+    @Override
+    public void start(Stage stage) throws Exception {
+	FxToolkit.registerPrimaryStage()
+	styleable = new Label()
+    }
 
-	def 'can add styleclass'() {
+    def 'can add styleclass'() {
 
-		given:
-		styler = new Styler(styleable)
+	given:
+	styler = new Styler(styleable)
 
-		expect:
-		styler.add('woodstock') == true
-		styleable.getStyleClass().contains('woodstock')
-	}
+	expect:
+	styler.add('woodstock') == true
+	styleable.getStyleClass().contains('woodstock')
+    }
 
-	def 'styleclass is not added twice'() {
+    def 'styleclass is not added twice'() {
 
-		given:
-		styler = new Styler(styleable).with('woodstock')
+	given:
+	styler = new Styler(styleable).with('woodstock')
 
-		expect:
-		styler.add('woodstock') == false
-	}
+	expect:
+	styler.add('woodstock') == false
+    }
 
-	def 'can remove styleclass'() {
+    def 'can remove styleclass'() {
 
-		given:
-		styleable.getStyleClass().add('woodstock')
-		styler = new Styler(styleable)
+	given:
+	styleable.getStyleClass().add('woodstock')
+	styler = new Styler(styleable)
 
-		expect:
-		styler.remove('woodstock') == true
-		!styleable.getStyleClass().contains('woodstock')
-	}
+	expect:
+	styler.remove('woodstock') == true
+	!styleable.getStyleClass().contains('woodstock')
+    }
 
-	def 'remove removes multiple styleclass instances'() {
+    def 'remove removes multiple styleclass instances'() {
 
-		given:
-		styleable.getStyleClass().add('woodstock')
-		styleable.getStyleClass().add('woodstock')
-		styleable.getStyleClass().add('woodstock')
-		styler = new Styler(styleable)
+	given:
+	styleable.getStyleClass().add('woodstock')
+	styleable.getStyleClass().add('woodstock')
+	styleable.getStyleClass().add('woodstock')
+	styler = new Styler(styleable)
 
-		expect:
-		styler.remove('woodstock') == true
-		!styleable.getStyleClass().contains('woodstock')
-	}
+	expect:
+	styler.remove('woodstock') == true
+	!styleable.getStyleClass().contains('woodstock')
+    }
 
-	def 'test adds style on true test'() {
+    def 'test adds style on true test'() {
 
-		given:
-		styler = new Styler(styleable)
+	given:
+	styler = new Styler(styleable)
 
-		when:
-		styler.addOrRemove(true, 'woodstock')
+	when:
+	styler.addOrRemove(true, 'woodstock')
 
-		then:
-		styleable.getStyleClass().contains('woodstock')
-	}
+	then:
+	styleable.getStyleClass().contains('woodstock')
+    }
 
-	def 'test removes style on false test'() {
+    def 'test removes style on false test'() {
 
-		given:
-		styler = new Styler(styleable).with('woostock')
+	given:
+	styler = new Styler(styleable).with('woostock')
 
-		when:
-		styler.addOrRemove(false, 'woodstock')
+	when:
+	styler.addOrRemove(false, 'woodstock')
 
-		then:
-		!styleable.getStyleClass().contains('woodstock')
-	}
+	then:
+	!styleable.getStyleClass().contains('woodstock')
+    }
 
-	def 'test toggles style on true test'() {
+    def 'test toggles style on true test'() {
 
-		given:
-		styler = new Styler(styleable).with('other')
+	given:
+	styler = new Styler(styleable).with('other')
 
-		when:
-		styler.ifOneElseOther(true, 'one', 'other')
+	when:
+	styler.ifOneElseOther(true, 'one', 'other')
 
-		then:
-		styleable.getStyleClass().contains('one')
-		!styleable.getStyleClass().contains('other')
-	}
+	then:
+	styleable.getStyleClass().contains('one')
+	!styleable.getStyleClass().contains('other')
+    }
 
-	def 'test toggles style on false test'() {
+    def 'test toggles style on false test'() {
 
-		given:
-		styler = new Styler(styleable).with('one')
+	given:
+	styler = new Styler(styleable).with('one')
 
-		when:
-		styler.ifOneElseOther(false, 'one', 'other')
+	when:
+	styler.ifOneElseOther(false, 'one', 'other')
 
-		then:
-		!styleable.getStyleClass().contains('one')
-		styleable.getStyleClass().contains('other')
-	}
+	then:
+	!styleable.getStyleClass().contains('one')
+	styleable.getStyleClass().contains('other')
+    }
 }

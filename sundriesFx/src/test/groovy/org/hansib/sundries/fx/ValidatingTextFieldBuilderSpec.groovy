@@ -11,187 +11,187 @@ import javafx.scene.layout.HBox
 
 public class ValidatingTextFieldBuilderSpec extends AppSpecWithScene {
 
-	private TextField textField
-	private Button button
+    private TextField textField
+    private Button button
 
-	@Override
-	protected Scene createScene() {
-		button = new Button("enter")
-		textField = new TextField()
-		return new Scene(new HBox(textField, button))
-	}
+    @Override
+    protected Scene createScene() {
+	button = new Button("enter")
+	textField = new TextField()
+	return new Scene(new HBox(textField, button))
+    }
 
-	def 'successful validation allows focus change'() {
+    def 'successful validation allows focus change'() {
 
-		given:
-		new ValidatingTextFieldBuilder(textField).build()
+	given:
+	new ValidatingTextFieldBuilder(textField).build()
 
-		when:
-		clickOn(textField)
-		write("abc")
-		push(KeyCode.TAB)
+	when:
+	clickOn(textField)
+	write("abc")
+	push(KeyCode.TAB)
 
-		then:
-		button.focused
-	}
+	then:
+	button.focused
+    }
 
-	def 'failing default validation forces back focus'() {
+    def 'failing default validation forces back focus'() {
 
-		given:
-		new ValidatingTextFieldBuilder(textField).build()
+	given:
+	new ValidatingTextFieldBuilder(textField).build()
 
-		when:
-		clickOn(textField) // is empty
-		push(KeyCode.TAB)
+	when:
+	clickOn(textField) // is empty
+	push(KeyCode.TAB)
 
-		then:
-		textField.focused
-	}
+	then:
+	textField.focused
+    }
 
-	def 'successful validation executes existing action handler'() {
+    def 'successful validation executes existing action handler'() {
 
-		given:
-		AtomicInteger executed = new AtomicInteger(0)
-		textField.setOnAction(e -> executed.getAndIncrement())
-		new ValidatingTextFieldBuilder(textField).withValidation(s -> 'abc'.equals(s)) build()
+	given:
+	AtomicInteger executed = new AtomicInteger(0)
+	textField.setOnAction(e -> executed.getAndIncrement())
+	new ValidatingTextFieldBuilder(textField).withValidation(s -> 'abc'.equals(s)) build()
 
-		when:
-		clickOn(textField)
-		write('abc')
-		push(KeyCode.ENTER)
+	when:
+	clickOn(textField)
+	write('abc')
+	push(KeyCode.ENTER)
 
-		then:
-		textField.focused
-		executed.get() == 1
-	}
+	then:
+	textField.focused
+	executed.get() == 1
+    }
 
-	def 'failing validation does not execute existing action handler'() {
+    def 'failing validation does not execute existing action handler'() {
 
-		given:
-		AtomicInteger executed = new AtomicInteger(0)
-		textField.setOnAction(e -> executed.getAndIncrement())
-		new ValidatingTextFieldBuilder(textField).withValidation(s -> 'abc'.equals(s)) build()
+	given:
+	AtomicInteger executed = new AtomicInteger(0)
+	textField.setOnAction(e -> executed.getAndIncrement())
+	new ValidatingTextFieldBuilder(textField).withValidation(s -> 'abc'.equals(s)) build()
 
-		when:
-		clickOn(textField)
-		write('x')
-		push(KeyCode.ENTER)
+	when:
+	clickOn(textField)
+	write('x')
+	push(KeyCode.ENTER)
 
-		then:
-		textField.focused
-		executed.get() == 0
-	}
+	then:
+	textField.focused
+	executed.get() == 0
+    }
 
-	def 'can use custom validation'() {
+    def 'can use custom validation'() {
 
-		given:
-		new ValidatingTextFieldBuilder(textField).withValidation(t -> "x".compareTo(t) < 0).build()
+	given:
+	new ValidatingTextFieldBuilder(textField).withValidation(t -> "x".compareTo(t) < 0).build()
 
-		when:
-		clickOn(textField)
-		write("u")
-		push(KeyCode.TAB)
+	when:
+	clickOn(textField)
+	write("u")
+	push(KeyCode.TAB)
 
-		then:
-		textField.focused
+	then:
+	textField.focused
 
-		when:
-		push(KeyCode.BACK_SPACE)
-		write("y")
-		push(KeyCode.TAB)
+	when:
+	push(KeyCode.BACK_SPACE)
+	write("y")
+	push(KeyCode.TAB)
 
-		then:
-		button.focused
-	}
+	then:
+	button.focused
+    }
 
-	def 'validated callback is called when leaving field'() {
+    def 'validated callback is called when leaving field'() {
 
-		given:
-		AtomicReference<String> result = new AtomicReference('')
-		new ValidatingTextFieldBuilder(textField).withValidatedTextCallback(t -> result.set(t)).build()
+	given:
+	AtomicReference<String> result = new AtomicReference('')
+	new ValidatingTextFieldBuilder(textField).withValidatedTextCallback(t -> result.set(t)).build()
 
-		when:
-		clickOn(textField) // is empty
-		write('hello world')
-		push(KeyCode.TAB)
+	when:
+	clickOn(textField) // is empty
+	write('hello world')
+	push(KeyCode.TAB)
 
-		then:
-		button.focused
-		result.get() == 'hello world'
-	}
+	then:
+	button.focused
+	result.get() == 'hello world'
+    }
 
-	def 'validated callback is called before existing action handler'() {
+    def 'validated callback is called before existing action handler'() {
 
-		given:
-		AtomicReference<String> result = new AtomicReference('')
+	given:
+	AtomicReference<String> result = new AtomicReference('')
 
-		// append to result string:
-		textField.setOnAction(e -> result.set(result.get() + 'onAction'))
+	// append to result string:
+	textField.setOnAction(e -> result.set(result.get() + 'onAction'))
 
-		new ValidatingTextFieldBuilder(textField).withValidatedTextCallback(t -> result.set(result.get() + t)).build()
+	new ValidatingTextFieldBuilder(textField).withValidatedTextCallback(t -> result.set(result.get() + t)).build()
 
-		when:
-		clickOn(textField) // is empty
-		write('-hello world-')
-		push(KeyCode.ENTER)
+	when:
+	clickOn(textField) // is empty
+	write('-hello world-')
+	push(KeyCode.ENTER)
 
-		then:
-		textField.focused
-		result.get() == '-hello world-onAction'
-	}
+	then:
+	textField.focused
+	result.get() == '-hello world-onAction'
+    }
 
-	def 'validated callback is not called on validation failure'() {
+    def 'validated callback is not called on validation failure'() {
 
-		given:
-		AtomicReference<String> result = new AtomicReference("")
-		new ValidatingTextFieldBuilder(textField).withValidation(t -> 'x'.compareTo(t) < 0).withValidatedTextCallback(t -> result.set(t)).build()
+	given:
+	AtomicReference<String> result = new AtomicReference("")
+	new ValidatingTextFieldBuilder(textField).withValidation(t -> 'x'.compareTo(t) < 0).withValidatedTextCallback(t -> result.set(t)).build()
 
-		when:
-		clickOn(textField) // is empty
-		write('abc')
-		push(KeyCode.TAB)
+	when:
+	clickOn(textField) // is empty
+	write('abc')
+	push(KeyCode.TAB)
 
-		then:
-		textField.focused
-		result.get() == ''
-	}
+	then:
+	textField.focused
+	result.get() == ''
+    }
 
-	def 'custom css is applied'() {
+    def 'custom css is applied'() {
 
-		when:
-		new ValidatingTextFieldBuilder(textField).withInvalidCssStyleClass('invalid-css').build()
+	when:
+	new ValidatingTextFieldBuilder(textField).withInvalidCssStyleClass('invalid-css').build()
 
-		then:
-		textField.getStyleClass().contains('invalid-css')
+	then:
+	textField.getStyleClass().contains('invalid-css')
 
-		when:
-		write("x")
+	when:
+	write("x")
 
-		then:
-		!textField.getStyleClass().contains('invalid-css')
+	then:
+	!textField.getStyleClass().contains('invalid-css')
 
-		when:
-		push(KeyCode.BACK_SPACE)
+	when:
+	push(KeyCode.BACK_SPACE)
 
-		then:
-		textField.getStyleClass().contains('invalid-css')
-	}
+	then:
+	textField.getStyleClass().contains('invalid-css')
+    }
 
-	def 'can set initial text'() {
+    def 'can set initial text'() {
 
-		when:
-		new ValidatingTextFieldBuilder(textField).withInitialText('abc').build()
+	when:
+	new ValidatingTextFieldBuilder(textField).withInitialText('abc').build()
 
-		then:
-		textField.getText() == 'abc'
-	}
+	then:
+	textField.getText() == 'abc'
+    }
 
-	def 'can set initial text via constructor'() {
+    def 'can set initial text via constructor'() {
 
-		when:
-		TextField tf = new ValidatingTextFieldBuilder('xyz').build()
+	when:
+	TextField tf = new ValidatingTextFieldBuilder('xyz').build()
 
-		then:
-		tf.getText() == 'xyz'
-	}
+	then:
+	tf.getText() == 'xyz'
+    }
 }
